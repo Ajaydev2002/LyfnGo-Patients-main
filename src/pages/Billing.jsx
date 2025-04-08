@@ -11,6 +11,7 @@ import { getAppointmentDetails } from "../api/Appointment";
 import { useDispatch } from "react-redux";
 import { savePatientData } from "../redux/PatientsSlice";
 import { decryption } from "../utils";
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 
 const Billing = () => {
@@ -32,7 +33,7 @@ const Billing = () => {
         discountUnit: { currency: "%" },
         taxinfo: [],
     })
-    const [selectedPayment, setSelectedPayment] = useState('');
+    const [selectedPayment, setSelectedPayment] = useState('Cash');
     const [productDropdown, setProductDropdown] = useState([]);
     const [selectedDropdown, setSelectedDropdown] = useState([]);
     const [productTaxSelected, setProductTaxSelected] = useState([]);
@@ -45,7 +46,7 @@ const Billing = () => {
         taxinfo: [],
     })
     const [appointmentData, setAppointmentData] = useState([]);
-    const [billingTotal, setBillingTotal] = useState(0);
+    const [billingTotal, setBillingTotal] = useState(0.00);
     const [invoiceNo, setInvoiceNo] = useState([]);
     const [reciptNo, setReciptNo] = useState([]);
     const dispatch = useDispatch();
@@ -845,9 +846,9 @@ const Billing = () => {
                                     <MenuItem
                                         key={procedure?.productUuid || index}
                                         value={procedure?.productName}
-                                        sx={{ fontSize: "13px" }}
+                                        sx={{ fontSize: "13px",display:"flex",justifyContent:"space-between" }}
                                     >
-                                        {procedure?.productName}
+                                        {procedure?.productName} <InventoryIcon sx={{color:"grey",fontSize:"13px"}}/>
                                     </MenuItem>
                                 ))
                             ) :
@@ -1215,8 +1216,7 @@ const Billing = () => {
                         disabled
                         id="outlined-disabled"
                         label="payable(INR)"
-                        value={billingTotal}
-                        defaultValue="₹ 0.00"
+                        value={parseFloat(billingTotal || 0).toFixed(2)}
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,
@@ -1236,8 +1236,7 @@ const Billing = () => {
                         enable
                         id="outlined-enable"
                         label="payable(INR)"
-                        value={billingTotal}
-                        defaultValue="₹ 0.00"
+                        value={parseFloat(billingTotal || 0).toFixed(2)}
                         sx={{
                             '& .MuiInputBase-root': {
                                 height: 40,
