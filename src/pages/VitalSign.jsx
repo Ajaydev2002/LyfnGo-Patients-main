@@ -72,7 +72,6 @@ const VitalSign = () => {
             });
     }, []);
 
-
     const formik = useFormik({
         initialValues: {
             assignedOn: dayjs(),

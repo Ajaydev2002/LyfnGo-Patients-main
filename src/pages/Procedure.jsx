@@ -165,7 +165,8 @@ const Procedure = () => {
 
     //API to get the procedureList to display
     useEffect(() => {
-        axios.get("https://flash.lyf.yoga/files/settings/api/treatmentCatalog/findCompletedProc/0ka1ok4u/jzxph5ql",
+        axios.get(
+            `https://flash.lyf.yoga/files/settings/api/treatmentCatalog/findCompletedProc/${appointmentUuid}/jzxph5ql`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -179,7 +180,7 @@ const Procedure = () => {
             .catch((error) => {
                 console.error("Error fetching data lab order test", error.message)
             })
-    }, [])
+    }, [appointmentUuid]);
 
     //APi to get discount type
     useEffect(() => {
@@ -463,7 +464,6 @@ const Procedure = () => {
                         </Box>
                     </Box>
 
-
                     <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
                         <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Tax</Typography>
                         <Box sx={{ marginTop: "8px" }}>
@@ -522,9 +522,6 @@ const Procedure = () => {
                         </Box>
                     </Box>
 
-
-
-
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "20px", paddingTop: "35px" }}>
                         <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>Total(INR)</Typography>
                         <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400", paddingTop: "10px" }}>{totalPrice}</Typography>
@@ -538,7 +535,6 @@ const Procedure = () => {
                             Add
                         </Button>
                     </Box>
-
                 </Box>
 
                 <Box sx={{ mt: 2 }}>
@@ -582,12 +578,12 @@ const Procedure = () => {
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.procedureName}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.qty}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.cost}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.cost ? parseFloat(item?.cost || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount > 0 ? `${item.discount} ${item?.discountUnit?.currency}` : "-"}                                    </TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         {item?.taxInfo?.map((tax) => `${tax.taxName} (${tax.taxPercent}%)`).join(", ")}
                                     </TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>₹{item?.total}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>₹{item?.total ? parseFloat(item?.total || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         <IconButton sx={{ color: "rgb(244, 67, 54)" }} onClick={() => handleDelete(index)}>
                                             <HighlightOffIcon />
@@ -652,7 +648,7 @@ const Procedure = () => {
                     ) : (
                         <TableBody>
                             <TableRow>
-                                <TableCell colSpan={7} align="center">
+                                <TableCell colSpan={8} align="center" sx={{ border: "none" }}>
                                     <Typography variant="h6" sx={{ fontSize: "18px", textAlign: "center", paddingBlock: "10px" }}>
                                         No data found
                                     </Typography>

@@ -78,7 +78,7 @@ const Treatment = () => {
             const payload = formattedPrescriptions;
 
             const response = await axios.put(
-                "https://flash.lyf.yoga/files/charting/api/treatmentPlan/103ygo7b",
+                `https://flash.lyf.yoga/files/charting/api/treatmentPlan/${appointmentUuid}`,
                 payload,
                 {
                     headers: {
@@ -86,13 +86,12 @@ const Treatment = () => {
                         Internal: "LYFnGO",
                     },
                 }
-
             );
-            alert("Prescription updated successfully!");
+            alert("Treatment updated successfully!");
 
         } catch (error) {
             console.error("API Error:", error);
-            alert("Faild to update Prescription");
+            alert("Faild to update Treatment");
         }
     }
 
@@ -186,9 +185,9 @@ const Treatment = () => {
         }));
     };
 
-    //API to get the tratmentlist to display
+    //API to get the tretmentlist to display
     useEffect(() => {
-        axios.get("https://flash.lyf.yoga/files/settings/api/treatmentCatalog/findTreatmentPlan/103ygo7b/jzxph5ql",
+        axios.get(`https://flash.lyf.yoga/files/settings/api/treatmentCatalog/findTreatmentPlan/${appointmentUuid}/jzxph5ql`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -238,7 +237,7 @@ const Treatment = () => {
             .catch((error) => {
                 console.error("Error fetching data lab order test", error.message)
             })
-    }, [])
+    }, [appointmentUuid]);
 
     //API to get treatment tax
     useEffect(() => {
@@ -603,14 +602,14 @@ const Treatment = () => {
                             {tabelTreatment.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.treatmentName}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.qty}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.cost}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.treatmentName ? item?.treatmentName : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.qty ? item?.qty : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}> ₹{ item?.cost ? parseFloat(item?.cost || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount ? `${item?.discount} ${item?.discountUnit?.currency}` : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         {item?.taxInfo?.map((tax) => `${tax.taxName} (${tax.taxPercent}%)`).join(", ")}
                                     </TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.total}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}> ₹{item?.total ? parseFloat(item?.total || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         <IconButton sx={{ color: "rgb(244, 67, 54)" }} onClick={() => handleDelete(index)}>
                                             <HighlightOffIcon />
@@ -619,7 +618,7 @@ const Treatment = () => {
                                 </TableRow>
                             ))}
                             <TableRow>
-                                <TableCell colSpan={3} rowSpan={2} sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}></TableCell>
+                                <TableCell colSpan={3} rowSpan={2} sx={{ border: "none", padding: "8px", textAlign: "center" }}></TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total price</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total discount</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total tax</TableCell>
@@ -628,10 +627,10 @@ const Treatment = () => {
                             </TableRow>
                             <TableRow sx={{ color: "#000", backgroundColor: "#f3f3f3" }}>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
-                                    ₹ {tabelTreatment.reduce((acc, item) => acc + (parseFloat(item.cost) || 0), 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                                    ₹ {(tabelTreatment ?? []).reduce((acc, item) => acc + (parseFloat(item.cost) || 0), 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                                 </TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
-                                    ₹{tabelTreatment.reduce((acc, item) => {
+                                    ₹{(tabelTreatment ?? []).reduce((acc, item) => {
 
                                         let basePrice = (parseFloat(item?.qty) || 1) * (parseFloat(item?.cost) || 0);
                                         let discountValue = parseFloat(item?.discount) || 0;
@@ -643,11 +642,8 @@ const Treatment = () => {
                                         return acc + discountValue;
                                     }, 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                                 </TableCell>
-
-
-                                <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>₹
-                                    {tabelTreatment.reduce((acc, item) => {
-
+                                <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
+                                    ₹ {(tabelTreatment ?? []).reduce((acc, item) => {
                                         let basePrice = (parseFloat(item?.qty) || 1) * (parseFloat(item?.cost) || 0);
                                         let discountValue = parseFloat(item?.discount) || 0;
 
@@ -657,18 +653,17 @@ const Treatment = () => {
 
                                         let finalPrice = basePrice - discountValue;
 
-                                        let totalTax = item?.taxInfo.reduce((acc, tax) => {
+                                        let totalTax = (item?.taxInfo ?? []).reduce((acc, tax) => {
                                             let taxAmount = (finalPrice * (parseFloat(tax.taxPercent) || 0)) / 100;
-
                                             return acc + taxAmount;
                                         }, 0);
 
                                         return acc + totalTax;
-
                                     }, 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                                 </TableCell>
+
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
-                                    ₹ {tabelTreatment.reduce((acc, item) => acc + (parseFloat(item.total) || 0), 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                                    ₹ {(tabelTreatment ?? []).reduce((acc, item) => acc + (parseFloat(item.total) || 0), 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                                 </TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}></TableCell>
                             </TableRow>
@@ -676,7 +671,7 @@ const Treatment = () => {
                     ) : (
                         <TableBody>
                             <TableRow>
-                                <TableCell colSpan={7} align="center">
+                                <TableCell colSpan={8} align="center" sx={{ border: "none" }}>
                                     <Typography variant="h6" sx={{ fontSize: "18px", textAlign: "center", paddingBlock: "10px" }}>
                                         No data found
                                     </Typography>

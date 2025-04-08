@@ -167,7 +167,7 @@ const ClinicalNotes = () => {
                 ])
 
             const response = await axios.put(
-                "https://flash.lyf.yoga/files/charting/api/clinicalNotes/g9qfnex2?tentUserUuid=6f22fe5v",
+                `https://flash.lyf.yoga/files/charting/api/clinicalNotes/${appointmentUuid}?tentUserUuid=6f22fe5v`,
                 { data: decryptKey?.plainText },
                 {
                     headers: {
@@ -187,6 +187,7 @@ const ClinicalNotes = () => {
     //Post API to add new item to the array
     const handleClickPost = async (value, notesCategoryUuid, manulEntry) => {
 
+
         try {
             const payload = {
                 description: value,
@@ -194,11 +195,11 @@ const ClinicalNotes = () => {
             }
 
             const response = await axios.post(
-                `https://flash.lyf.yoga/files/charting/api/clinicalNotes/${appointmentUuid}?tentUserUuid=6f22fe5v`,
+                `https://flash.lyf.yoga/files/settings/api/mastClinicalNotes/jzxph5ql`,
                 payload,
                 {
                     headers: {
-                        "Content-Type": "application/json",
+                        Accept: "application/json",
                         Internal: "LYFnGO",
                     },
                 }
@@ -279,10 +280,10 @@ const ClinicalNotes = () => {
                         </Box>
                         <Box>
                             <Typography variant="h6" sx={{ fontSize: "18px", fontWeight: "500" }}>{new Date(item.scheduledOn).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "2-digit"
-                        })}</Typography>
+                                day: "2-digit",
+                                month: "short",
+                                year: "2-digit"
+                            })}</Typography>
                             <Typography variant="h6" sx={{ color: "#727272", fontSize: "14px" }}>{item?.appointmentStartTime.split(" ")[1].split(":").slice(0, 2).join(":")} pm - {item?.appointmentEndTime.split(" ")[1].split(":").slice(0, 2).join(":")} pm <span style={{ color: "#000", fontWeight: "500", marginLeft: "8px" }}>({item?.scheduledPeriod}{item?.scheduledPeriodType})</span></Typography>
                         </Box>
                         <Box>
@@ -375,7 +376,12 @@ const ClinicalNotes = () => {
                                         label={isFocused ? "" : "+ Type and hit enter to add"}
                                         onFocus={() => setIsFocused(true)}
                                         onBlur={() => setIsFocused(false)}
-                                        sx={{ width: "100%" }}
+                                        sx={{
+                                            width: "100%",
+                                            "& input": {
+                                                fontSize: "13px",
+                                            },
+                                        }}
                                         InputLabelProps={{ sx: { fontSize: "13px" } }}
                                     />
                                 )}
@@ -444,7 +450,12 @@ const ClinicalNotes = () => {
                                         label={isFocused ? "" : "+ Type and hit enter to add"}
                                         onFocus={() => setIsFocused(true)}
                                         onBlur={() => setIsFocused(false)}
-                                        sx={{ width: "100%" }}
+                                        sx={{
+                                            width: "100%",
+                                            "& input": {
+                                                fontSize: "13px",
+                                            },
+                                        }}
                                         InputLabelProps={{ sx: { fontSize: "13px" } }}
                                     />
                                 )}
@@ -512,7 +523,12 @@ const ClinicalNotes = () => {
                                         label={isFocused ? "" : "+ Type and hit enter to add"}
                                         onFocus={() => setIsFocused(true)}
                                         onBlur={() => setIsFocused(false)}
-                                        sx={{ width: "100%" }}
+                                        sx={{
+                                            width: "100%",
+                                            "& input": {
+                                                fontSize: "13px",
+                                            },
+                                        }}
                                         InputLabelProps={{ sx: { fontSize: "13px" } }}
                                     />
                                 )}
@@ -580,7 +596,12 @@ const ClinicalNotes = () => {
                                         label={isFocused ? "" : "+ Type and hit enter to add"}
                                         onFocus={() => setIsFocused(true)}
                                         onBlur={() => setIsFocused(false)}
-                                        sx={{ width: "100%" }}
+                                        sx={{
+                                            width: "100%",
+                                            "& input": {
+                                                fontSize: "13px",
+                                            },
+                                        }}
                                         InputLabelProps={{ sx: { fontSize: "13px" } }}
                                     />
                                 )}

@@ -25,6 +25,7 @@ const ViewHistory = ({setShowViewHistory}) => {
         setShowViewHistory(false);
     };
 
+    console.log("appointmentDetails", appointmentDetails)
 
     //To get the vital signs to display in the tabel
     useEffect(() => {
@@ -81,7 +82,7 @@ const ViewHistory = ({setShowViewHistory}) => {
         <Box sx={{ backgroundColor: "rgb(233, 240, 254)", marginTop: "5px" }}>
             <Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "8px", backgroundColor: "#0062DD", position: "sticky", top: "0", }}>
-                    <Typography variant="body1" sx={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>Total Number of Visits: 30</Typography>
+                    <Typography variant="body1" sx={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>Total Number of Visits: {appointmentDetails?.totalVisit}</Typography>
 
                     <IconButton onClick={exitViewHistory}>
                         <SvgIcon sx={{ color: "#fff", fontSize: "24px" }}>

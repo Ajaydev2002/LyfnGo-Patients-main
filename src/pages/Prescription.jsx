@@ -43,8 +43,6 @@ const Prescription = () => {
 
     const dispatch = useDispatch();
 
-    console.log("dietList", dietList)
-
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
@@ -165,7 +163,7 @@ const Prescription = () => {
             .catch((error) => {
                 console.error("Error fetching data drugname :", error.message);
             });
-    }, []);
+    }, [appointmentUuid]);
 
 
     //this is to save the updated changes in the prescription
@@ -202,7 +200,7 @@ const Prescription = () => {
             };
 
             const response = await axios.put(
-                "https://flash.lyf.yoga/files/charting/api/ePrescribe/0ka1ok4u",
+                `https://flash.lyf.yoga/files/charting/api/ePrescribe/${appointmentUuid}`,
                 payload,
                 {
                     headers: {
@@ -213,7 +211,6 @@ const Prescription = () => {
 
             );
             alert("Prescription updated successfully!");
-
         } catch (error) {
             console.error("API Error:", error);
             alert("Faild to update Prescription");

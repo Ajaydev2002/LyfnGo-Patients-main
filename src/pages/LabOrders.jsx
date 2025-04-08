@@ -33,7 +33,11 @@ const LabOrder = () => {
 
     const dispatch = useDispatch();
 
+    console.log("selctTestName", selctTestName);
+    console.log("labOrderformValues", labOrderformValues);
 
+
+    //To get appointment details
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
@@ -41,8 +45,6 @@ const LabOrder = () => {
                 dispatch(savePatientData(response));
 
                 setAppointmentData(response?.data?.data);
-
-                console.log("Dispatched patient data from appontment details", response);
 
             } catch (error) {
                 console.error("Error:", error);
@@ -52,7 +54,6 @@ const LabOrder = () => {
     }, [dispatch]);
 
     const appointmentUuid = appointmentData[0]?.appointmentUuid
-
 
     const handleClickPost = async () => {
 
@@ -127,8 +128,9 @@ const LabOrder = () => {
         setTabelLabOrder(tabelLabOrder.filter((_, index) => index !== indexToRemove));
     };
 
-    //To add details to the tabel from the input field
+    //To ADD details to the tabel from the input field
     const handleAddDetail = () => {
+
         if (!selctTestName || !labOrderformValues.unit || !labOrderformValues.price) {
             alert("please fill the details");
             return;
@@ -251,7 +253,7 @@ const LabOrder = () => {
             .catch((error) => {
                 console.error("Error fetching data discountType", error.message)
             })
-    }, [])
+    }, [appointmentUuid]);
 
     //To calculate the total Price
     useEffect(() => {
@@ -587,14 +589,14 @@ const LabOrder = () => {
                             {tabelLabOrder.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_name}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_unit}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_price}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_name ? item?.lab_order_name : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_unit ? item?.lab_order_unit : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_price ? item?.lab_order_price : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount ? `${item.discount} ${item?.discount_type}` : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         {item?.tax_info?.map((tax) => `${tax.tax_name} (${tax.tax_percent}%)`).join(", ")}
                                     </TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.total_price}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{parseFloat(item?.total_price || 0).toFixed(2)}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         <IconButton sx={{ color: "rgb(244, 67, 54)" }} onClick={() => handleDelete(index)}>
                                             <HighlightOffIcon />
@@ -603,13 +605,14 @@ const LabOrder = () => {
                                 </TableRow>
                             ))}
                             <TableRow>
-                                <TableCell colSpan={3} rowSpan={2} sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}></TableCell>
+                                <TableCell colSpan={3} rowSpan={2} sx={{ padding: "8px", textAlign: "center", border: "none" }}></TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total price</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total discount</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Total tax</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>Grand total</TableCell>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}></TableCell>
                             </TableRow>
+
                             <TableRow sx={{ color: "#000", backgroundColor: "#f3f3f3" }}>
                                 <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                     ₹ {tabelLabOrder.reduce((acc, item) => acc + (parseFloat(item.lab_order_price) || 0), 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
@@ -658,7 +661,7 @@ const LabOrder = () => {
                     ) : (
                         <TableBody>
                             <TableRow>
-                                <TableCell colSpan={7} align="center">
+                                <TableCell colSpan={7} sx={{ border: "none" }}>
                                     <Typography variant="h6" sx={{ fontSize: "18px", textAlign: "center", paddingBlock: "10px" }}>
                                         No data found
                                     </Typography>

@@ -15,7 +15,6 @@ const Files = () => {
     const [appointmentData, setAppointmentData] = useState([]);
 
     const dispatch = useDispatch();
-    const appointmentUuid = appointmentData[0]?.appointmentUuid
 
     useEffect(() => {
         const fetchAndSave = async () => {
@@ -31,6 +30,10 @@ const Files = () => {
         };
         fetchAndSave();
     }, [dispatch]);
+
+    const appointmentUuid = appointmentData[0]?.appointmentUuid
+
+    console.log("appointmentUuid",appointmentUuid)
 
     //API to get the data to display the image
     useEffect(() => {
@@ -48,7 +51,7 @@ const Files = () => {
             .catch((error) => {
                 console.error("Error fetching data diet lifestyle:", error.message);
             });
-    }, [])
+    }, [appointmentUuid]);
 
     //API to save files which are uploaded
     const handleSaveFile = async () => {
@@ -188,7 +191,7 @@ const Files = () => {
                 <Box sx={{ mt: 5, display: "flex", gap: "10px" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         {preview && preview.map((item) => (
-                            <Box>
+                            <Box sx={{display:"flex",flexDirection:"column",gap:"1px"}}>
                                 <img src={item.filePath} alt="preview" width="100px" style={{ borderRadius: "5px" }} />
                                 <Typography variant="body1" sx={{ fontSize: "9px", width: "100px", color: "#fff", padding: "4px", borderRadius: "4px", backgroundColor: "#323232" }}>{item?.documentName}</Typography>
                             </Box>

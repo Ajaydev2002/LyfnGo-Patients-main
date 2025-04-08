@@ -51,7 +51,7 @@ const Billing = () => {
     const dispatch = useDispatch();
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    console.log("appointmentUuid", appointmentUuid);
+    console.log("addServiceOption", appointmentUuid);
 
     useEffect(() => {
         const fetchAndSave = async () => {
