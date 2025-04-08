@@ -137,10 +137,11 @@ const Treatment = () => {
             total: priceWithTax,
         }
 
-        setTabelTreatment((prev) => [
-            ...(prev || []),
-            newEntry
-        ]);
+        setTabelTreatment((prev) => {
+            const alreadyExists = prev.some(item => item.treatmentName === newEntry.treatmentName);
+            if (alreadyExists) return prev;
+            return [...prev, newEntry];
+        });
     };
 
     //To update the price to the form - from the selected input
@@ -201,7 +202,7 @@ const Treatment = () => {
             .catch((error) => {
                 console.error("Error fetching data lab order test", error.message)
             })
-    }, [])
+    }, [appointmentUuid])
 
     //APi to get discount type
     useEffect(() => {
@@ -350,8 +351,6 @@ const Treatment = () => {
                 </FormControl>
             </Box>
 
-
-
             <Box sx={{ display: selectedTreatmentName ? "block" : "none" }}>
                 <Box sx={{ display: "flex", width: "100%" }}>
                     <Box sx={{ flexBasis: "16.6667%", flexGrow: "0", maxWidth: "16.6667%", display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "16px", paddingTop: "16px" }}>
@@ -484,7 +483,6 @@ const Treatment = () => {
                         </Box>
                     </Box>
 
-
                     <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
                         <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Tax</Typography>
                         <Box sx={{ marginTop: "8px" }}>
@@ -543,10 +541,6 @@ const Treatment = () => {
                         </Box>
                     </Box>
 
-
-
-
-
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "20px", paddingTop: "35px" }}>
                         <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>Total(INR)</Typography>
                         <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400", paddingTop: "10px" }}>{totalPrice}</Typography>
@@ -560,7 +554,6 @@ const Treatment = () => {
                             Add
                         </Button>
                     </Box>
-
                 </Box>
 
                 <Box sx={{ mt: 2 }}>
@@ -580,8 +573,6 @@ const Treatment = () => {
                     />
                 </Box>
             </Box>
-
-
 
             <Box sx={{ mt: 4 }}>
                 <Table>
@@ -604,7 +595,7 @@ const Treatment = () => {
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.treatmentName ? item?.treatmentName : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.qty ? item?.qty : "-"}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}> ₹{ item?.cost ? parseFloat(item?.cost || 0).toFixed(2) : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}> ₹{item?.cost ? parseFloat(item?.cost || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount ? `${item?.discount} ${item?.discountUnit?.currency}` : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         {item?.taxInfo?.map((tax) => `${tax.taxName} (${tax.taxPercent}%)`).join(", ")}

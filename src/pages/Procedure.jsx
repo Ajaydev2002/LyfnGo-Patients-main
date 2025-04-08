@@ -31,7 +31,6 @@ const Procedure = () => {
     const [appointmentData, setAppointmentData] = useState([]);
 
     const dispatch = useDispatch();
-
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
     useEffect(() => {
@@ -48,7 +47,6 @@ const Procedure = () => {
         };
         fetchAndSave();
     }, [dispatch]);
-
 
     const handleClickPost = async () => {
 
@@ -117,10 +115,11 @@ const Procedure = () => {
             total: totalPrice,
         }
 
-        setTabelProcedure((prev) => [
-            ...(prev || []),
-            newEntry
-        ]);
+        setTabelProcedure((prev) => {
+            const alreadyExists = prev.some(item => item.procedureName === newEntry.procedureName);
+            if (alreadyExists) return prev;
+            return [...prev, newEntry];
+        });
 
     };
 
@@ -216,7 +215,7 @@ const Procedure = () => {
             .catch((error) => {
                 console.error("Error fetching data lab order test", error.message)
             })
-    }, [])
+    }, [appointmentUuid]);
 
     //API to get treatment tax
     useEffect(() => {
@@ -234,8 +233,7 @@ const Procedure = () => {
             .catch((error) => {
                 console.error("Error fetching data discountType", error.message)
             })
-    }, [])
-
+    }, []);
 
     //To delete the selected row from the tabel
     const handleDelete = (indexToRemove) => {
@@ -297,7 +295,6 @@ const Procedure = () => {
                 </Box>
             ))}
 
-
             <Box sx={{ mt: 3, width: "100%" }}>
                 <FormControl sx={{ width: "100%" }}>
                     <Autocomplete
@@ -309,7 +306,7 @@ const Procedure = () => {
                         }}
                         renderOption={(props, option) => (
                             <li {...props} style={{ fontSize: "13px", padding: "8px 12px", color: "black" }}>
-                                {option?.tentProcedureCatalogName}
+                                {option?.tentProcedureCatalogName}  {option?.isPlanned === true ? "(Planned)" : ""}
                             </li>
                         )}
                         renderInput={(params) => (
@@ -330,7 +327,6 @@ const Procedure = () => {
                     />
                 </FormControl>
             </Box>
-
 
             <Box sx={{ display: selectedProcedureName ? "block" : "none" }}>
                 <Box sx={{ display: "flex", width: "100%" }}>

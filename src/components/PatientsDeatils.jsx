@@ -74,8 +74,14 @@ const PatientsDeatails = () => {
         <Box sx={{ marginLeft: "101px", marginTop: "62px" }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#E5F6FF", position: "fixed", width: "calc(100% - 101px)", zIndex: "100" }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <Box sx={{ backgroundColor: "#2EB2FF", height: "100%", borderRadius: "0%" }}>
-                        <IconButton  onClick={handleGoBack}>
+                    <Box sx={{
+                        height: "110px",
+                        backgroundColor: "#2EB2FF",
+                        borderRadius: "0%",
+                        display: "flex",
+                        alignItems: "center",
+                    }}>
+                        <IconButton onClick={handleGoBack}>
                             <SvgIcon sx={{ color: "#fff", paddingLeft: "4px", }}>
                                 <path d="M11.67 3.87 9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" />
                             </SvgIcon>
@@ -84,7 +90,7 @@ const PatientsDeatails = () => {
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
 
-                        <Box sx={{ width: "64px", height: "64px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgb(46,178,255)", borderRadius: "50%", color: "#fff", fontSize: "20px",fontWeight:"500" }}>{patientInfo?.custName.charAt(0).toUpperCase()}</Box>
+                        <Box sx={{ width: "64px", height: "64px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgb(46,178,255)", borderRadius: "50%", color: "#fff", fontSize: "20px", fontWeight: "500" }}>{patientInfo?.custName.charAt(0).toUpperCase()}</Box>
 
                         <Box>
                             <Typography variant="h5" sx={{ color: "#0062DD", fontSize: "16px", marginTop: "6px", fontWeight: "600" }}>

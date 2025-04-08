@@ -33,9 +33,6 @@ const LabOrder = () => {
 
     const dispatch = useDispatch();
 
-    console.log("selctTestName", selctTestName);
-    console.log("labOrderformValues", labOrderformValues);
-
 
     //To get appointment details
     useEffect(() => {
@@ -167,10 +164,11 @@ const LabOrder = () => {
             total_price: priceWithTax.toFixed(2),
         }
 
-        setTabelLabOrder((prev) => [
-            ...(prev || []),
-            newEntry
-        ]);
+        setTabelLabOrder((prev) => {
+            const alreadyExists = prev.some(item => item.lab_order_name === newEntry.lab_order_name);
+            if (alreadyExists) return prev;
+            return [...prev, newEntry];
+        });
     };
 
     //The get the values to update the form value to tabel

@@ -20,7 +20,7 @@ const ViewHistory = ({setShowViewHistory}) => {
     const [tabelVitalSigns, setTabelVitalSigns] = useState([]);
     const [appointmentDetails, setAppointmentDetails] = useState([]);
 
-
+    
     const exitViewHistory = () => {
         setShowViewHistory(false);
     };
@@ -78,7 +78,7 @@ const ViewHistory = ({setShowViewHistory}) => {
     return (
         <Box sx={{ backgroundColor: "rgb(233, 240, 254)", marginTop: "5px" }}>
             <Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: "8px", backgroundColor: "#0062DD", position: "sticky", top: "0", }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "93%", padding: "8px", backgroundColor: "#0062DD", position: "fixed",zIndex:"500" }}>
                     <Typography variant="body1" sx={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>Total Number of Visits: {appointmentDetails?.totalVisit}</Typography>
 
                     <IconButton onClick={exitViewHistory}>
@@ -88,7 +88,7 @@ const ViewHistory = ({setShowViewHistory}) => {
                     </IconButton>
                 </Box>
 
-                <Box sx={{ marginInline: "28px", marginBlock: "10px" }}>
+                <Box sx={{ marginInline: "28px", paddingTop: "70px", }}>
                     <Accordion>
                         <AccordionSummary
                             expandIcon={<ArrowDownwardIcon sx={{ color: "#fff" }} />}
