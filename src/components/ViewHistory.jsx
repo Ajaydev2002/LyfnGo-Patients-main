@@ -25,8 +25,6 @@ const ViewHistory = ({setShowViewHistory}) => {
         setShowViewHistory(false);
     };
 
-    console.log("appointmentDetails", appointmentDetails)
-
     //To get the vital signs to display in the tabel
     useEffect(() => {
         axios.get("https://flash.lyf.yoga/files/charting/api/vitalSign/getByVitalSign/rkpcdske",
@@ -64,7 +62,6 @@ const ViewHistory = ({setShowViewHistory}) => {
                 console.error("Error fetching data Appointment details:", error.message);
             });
     }, []);
-
 
     //for pagination
     const handleChangePage = (event, newPage) => {

@@ -51,8 +51,6 @@ const Billing = () => {
     const dispatch = useDispatch();
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    console.log("addServiceOption", appointmentUuid);
-
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
@@ -60,8 +58,6 @@ const Billing = () => {
                 dispatch(savePatientData(response));
 
                 setAppointmentData(response?.data?.data);
-
-                console.log("Dispatched patient data from appontment details", response);
 
             } catch (error) {
                 console.error("Error:", error);
@@ -144,7 +140,6 @@ const Billing = () => {
                     },
                 }
             );
-            console.log("success", response.data);
             alert("Prescription updated successfully!");
         } catch (error) {
             console.error("Error", error.response?.data || error.message);
