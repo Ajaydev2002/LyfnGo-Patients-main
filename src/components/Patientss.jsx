@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 const Patientss = () => {
 
     const [patientList, setPatientsList] = useState([]);
-    const [error, setError] = useState(null);
-
 
     useEffect(() => {
         axios.get(
@@ -20,24 +18,17 @@ const Patientss = () => {
             }
         )
             .then((response) => {
-                console.log("Patients List:", response.data.data);
                 setPatientsList(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error.message);
-                setError(error.message);
             });
     }, []);
 
-
     const patientItems = patientList?.data?.customerList || [];
 
-    console.log("patientsItems", patientItems)
-
-
     return (
-
-        <Box style={{ marginLeft: "101px", marginTop: "63px" }}>
+        <Box style={{ marginLeft: "101px", marginTop: "60px" }}>
             <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#0062DD", paddingBlock: "10px" }}>
                 <Box>
                     <Typography style={{ fontSize: "16px", fontWeight: "500", color: "#fff", letterSpacing: "p", marginLeft: "18px" }}>Patientss</Typography>

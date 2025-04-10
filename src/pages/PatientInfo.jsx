@@ -7,7 +7,6 @@ import { getPatientDetails } from "../api/patientsDetails";
 import { savePatientData } from "../redux/PatientsSlice";
 
 
-
 const PatientInfo = () => {
 
     const [patientsDetails, setPatientsDetails] = useState([]);
@@ -16,8 +15,7 @@ const PatientInfo = () => {
 
     const dispatch = useDispatch();
 
-    const { data, loading, error } = useSelector((state) => state.patients);
-
+    const { loading, error } = useSelector((state) => state.patients);
 
     //to provide the data to the redux
     useEffect(() => {
@@ -25,7 +23,6 @@ const PatientInfo = () => {
             try {
                 const response = await getPatientDetails(custUuid);
                 dispatch(savePatientData(response));
-
                 setPatientsDetails(response);
 
             } catch (error) {

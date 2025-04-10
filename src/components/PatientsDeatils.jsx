@@ -52,8 +52,6 @@ const PatientsDeatails = () => {
 
                 setPatientInformation(response);
 
-                console.log("Dispatched patient data:", response);
-
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -66,12 +64,10 @@ const PatientsDeatails = () => {
 
     const patientInfo = patientInformatiom?.data;
 
-    //console.log("patientInfo",patientInfo)
-
 
 
     return (
-        <Box sx={{ marginLeft: "101px", marginTop: "62px" }}>
+        <Box sx={{ marginLeft: "101px", marginTop: "59px" }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#E5F6FF", position: "fixed", width: "calc(100% - 101px)", zIndex: "100" }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "14px" }}>
                     <Box sx={{

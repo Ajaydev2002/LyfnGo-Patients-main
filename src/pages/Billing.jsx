@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, SvgIcon, IconButton, FormControl, OutlinedInput, InputLabel, Button, MenuItem, Table, TableHead, TableRow, TableCell, TableBody, TextField } from "@mui/material";
+import { Box, Typography, SvgIcon, IconButton, FormControl, OutlinedInput, InputLabel, Button, MenuItem, Table, TableHead, TableRow, TableCell, TableBody, TextField, Autocomplete } from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import axios from "axios";
 import Select from '@mui/material/Select';
@@ -21,18 +21,18 @@ const Billing = () => {
     const [addServiceOption, setAddServiceOption] = useState([]);
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [discountType, setDiscountType] = useState([]);
-    const [treatmentName, setTreatmentName] = useState([]);
+    const [treatmentName, setTreatmentName] = useState(null);
     const [taxType, setTaxType] = useState([]);
     const [totalPrice, setTotalPrice] = useState([]);
     const [taxSelected, setTaxSelected] = useState([]);
-    const [billingTable, setBillingTable] = useState([])
+    const [billingTable, setBillingTable] = useState([]);
     const [formInputValue, setFormInputValue] = useState({
         unit: "1",
         price: "",
         discount: "",
         discountUnit: { currency: "%" },
         taxinfo: [],
-    })
+    });
     const [selectedPayment, setSelectedPayment] = useState('Cash');
     const [productDropdown, setProductDropdown] = useState([]);
     const [selectedDropdown, setSelectedDropdown] = useState([]);
@@ -52,8 +52,6 @@ const Billing = () => {
     const dispatch = useDispatch();
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    console.log("productDropdown", productDropdown);
-
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
@@ -68,7 +66,6 @@ const Billing = () => {
         };
         fetchAndSave();
     }, [dispatch]);
-
 
     const handleOpenService = () => {
         setOpenServices(true);
@@ -93,6 +90,8 @@ const Billing = () => {
             const serviceItems = billingTable.filter(item => item.type === 'service');
             const productItems = billingTable.filter(item => item.type === 'product');
 
+            console.log("serviceItems", serviceItems);
+
             let formattedData = encryption({
                 amtPaid: parseFloat(billingTotal).toFixed(2),
                 balance: "0.00",
@@ -104,7 +103,7 @@ const Billing = () => {
                 custInvoiceNo: invoiceNo,
 
                 custItems: serviceItems?.length > 0 ? serviceItems.map(item => ({
-                    custBillingCost: parseFloat(item.cost) || 0,
+                    custBillingCost: item.cost?.toString() || "0",
                     custBillingDiscount: parseFloat(item.discount) || 0,
                     discountType: item.discountUnit.currency,
                     custBillingTax: parseFloat(
@@ -118,7 +117,7 @@ const Billing = () => {
                     newProcedure: false,
                     orderName: item.treatmentName,
                     procedureUuid: item.procedureUuid || "",
-                    taxUuid: [],
+                    taxUuid: item.taxInfo?.map(tax => tax.taxUuid) || [],
                     isProcedure: true,
                     isLabOrder: false,
                 })) : [],
@@ -136,10 +135,9 @@ const Billing = () => {
                     custBillingUnit: parseFloat(item.qty) || 0,
                     discountType: item.discountUnit?.currency || "₹",
                     orderName: [item.treatmentName || ""],
-                    inventoryItemUuid: [
-                    ],
+                    inventoryItemUuid: [item?.procedureUuid] || [],
                     productUuid: "",
-                    taxUuid: [],
+                    taxUuid: item.taxInfo?.map(tax => tax.taxUuid) || [],
                     isProduct: false
                 })) : [],
 
@@ -299,6 +297,7 @@ const Billing = () => {
             taxinfo: selectedTax.map((tax) => ({
                 taxName: tax.taxName,
                 taxPercent: tax.taxPercent,
+                taxUuid: tax.taxUuid
             }))
         }))
     }
@@ -347,7 +346,7 @@ const Billing = () => {
         let priceWithTax = finalPrice + totalTax
 
         const newEntry = {
-            treatmentName: treatmentName,
+            treatmentName: treatmentName?.tentProcedureCatalogName,
             qty: formInputValue?.unit,
             cost: formInputValue?.price,
             discount: formInputValue?.discount,
@@ -355,8 +354,10 @@ const Billing = () => {
             taxInfo: formInputValue?.taxinfo?.map((tax) => ({
                 taxName: tax.taxName,
                 taxPercent: tax.taxPercent,
+                taxUuid: tax.taxUuid,
             })) || [],
             total: priceWithTax,
+            procedureUuid: treatmentName?.uuid,
             type: 'service',
         }
 
@@ -364,6 +365,15 @@ const Billing = () => {
             ...(prev || []),
             newEntry
         ]);
+
+        setTreatmentName("");
+        setFormInputValue({
+            unit: "",
+            price: "",
+            discount: "",
+            discountUnit: { currency: "%" },
+            taxinfo: [],
+        });
     };
 
     //To add details from input to table for AddProduct
@@ -394,7 +404,7 @@ const Billing = () => {
         let priceWithTax = finalPrice + totalTax
 
         const newEntry = {
-            treatmentName: selectedDropdown,
+            treatmentName: selectedDropdown?.productName,
             qty: productFormInputValue?.unit,
             cost: productFormInputValue?.price,
             discount: productFormInputValue?.discount,
@@ -402,8 +412,10 @@ const Billing = () => {
             taxInfo: productFormInputValue?.taxinfo?.map((tax) => ({
                 taxName: tax.taxName,
                 taxPercent: tax.taxPercent,
+                taxUuid: tax.taxUuid,
             })) || [],
             total: priceWithTax,
+            procedureUuid: selectedDropdown?.productDetails[0]?.itemUuid,
             type: 'product',
         }
 
@@ -411,6 +423,16 @@ const Billing = () => {
             ...(prev || []),
             newEntry
         ]);
+
+        setSelectedDropdown("");
+        setProductFormInputValue({
+            unit: "",
+            price: "",
+            discount: "",
+            discountUnit: { currency: "%" },
+            taxinfo: [],
+        });
+        setProductTaxSelected([]);
     };
 
     //To calculate the total price for Add service
@@ -483,7 +505,6 @@ const Billing = () => {
             );
 
             if (response.data.status === "success") {
-                console.log("API Success in billing:", response.data);
                 setProductDropdown(response?.data?.data?.quickSaleWrapper?.inventoryAndProductsWrapper?.inventoryAndProductsDropdownList);
             }
         } catch (error) {
@@ -578,54 +599,48 @@ const Billing = () => {
             <Box sx={{ marginTop: "30px", display: openServices === true ? "block" : "none" }}>
 
                 <Box>
-                    <FormControl sx={{ m: 1, width: 400, height: 50 }}>
-                        <InputLabel id="demo-multiple-name-label"
-                            sx={{ fontSize: '14px' }}>search & add procedure *</InputLabel>
-                        <Select
-                            labelId="demo-multiple-name-label"
-                            id="demo-multiple-name"
-                            value={treatmentName}
-                            onChange={(e) => {
-                                const selectedValues = e.target.value;
-                                setTreatmentName(selectedValues);
-                            }}
-                            input={< OutlinedInput
-                                label="search & add procedure"
+                    <Autocomplete
+                        size="small"
+                        options={addServiceOption}
+                        getOptionLabel={(option) => option.tentProcedureCatalogName || ""}
+                        value={treatmentName}
+                        onChange={(event, newValue) => {
+                            setTreatmentName(newValue);
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Search & add procedure *"
+                                variant="outlined"
                                 sx={{
-                                    height: 40,
-                                    '& .MuiSelect-select': {
+                                    '& .MuiInputBase-root': {
+                                        height: 40,
+                                        width: "400px",
                                         fontSize: '13px',
-                                    }
-                                }} />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 250,
                                     },
+                                    '& .MuiInputLabel-root': {
+                                        fontSize: '13px',
+                                    },
+                                }}
+                            />
+                        )}
+                        componentsProps={{
+                            paper: {
+                                sx: {
+                                    fontSize: '13px',
                                 },
-                            }}
-                        >
-                            {addServiceOption.map((procedure) => (
-                                <MenuItem key={procedure.uuid} value={procedure.tentProcedureCatalogName}
-                                    sx={{ fontSize: "13px" }}>
-                                    {procedure.tentProcedureCatalogName} {procedure?.isCompleted
-                                        ? "(completed)"
-                                        : procedure?.isAssigned
-                                            ? "(Assigned)"
-                                            : ""}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                            },
+                        }}
+                    />
                 </Box>
 
-                <Box sx={{ display: treatmentName?.length > 0 ? "block" : "none" }}>
+                <Box sx={{ display: treatmentName ? "block" : "none" }}>
 
                     <Box sx={{ display: "flex", width: "100%" }}>
 
                         <Box sx={{ flexBasis: "16.6667%", flexGrow: "0", maxWidth: "16.6667%", display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "16px", paddingTop: "16px" }}>
                             <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "14px" }}>Procedure</Typography>
-                            <Typography variant="span" sx={{ fontWeight: "400", fontSize: "14px" }} >{treatmentName}</Typography>
+                            <Typography variant="span" sx={{ fontWeight: "400", fontSize: "14px" }} >{treatmentName?.tentProcedureCatalogName}</Typography>
                         </Box>
 
                         <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
@@ -753,7 +768,6 @@ const Billing = () => {
                             </Box>
                         </Box>
 
-
                         <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
                             <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Tax</Typography>
                             <Box sx={{ marginTop: "8px" }}>
@@ -843,250 +857,250 @@ const Billing = () => {
 
             <Box sx={{ marginTop: "30px", display: openProduct === true ? "block" : "none" }}>
                 <Box >
-                    <FormControl sx={{ m: 1, width: 400, height: 50 }}>
-                        <InputLabel id="demo-multiple-name-label"
-                            sx={{ fontSize: '14px' }}>search & add product *</InputLabel>
-                        <Select
-                            labelId="demo-multiple-name-label"
-                            id="demo-multiple-name"
+
+
+                    <Box>
+                        <Autocomplete
+                            size="small"
+                            options={productDropdown}
+                            getOptionLabel={(option) => option.productName || ""}
                             value={selectedDropdown}
-                            onChange={(e) => { setSelectedDropdown(e.target.value) }}
-                            input={< OutlinedInput
-                                label="search & add product"
-                                sx={{
-                                    height: 40,
-                                    '& .MuiSelect-select': {
+                            onChange={(event, newValue) => {
+                                setSelectedDropdown(newValue);
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="search & add product"
+                                    variant="outlined"
+                                    sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: 40,
+                                            width: "400px",
+                                            fontSize: '13px',
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            fontSize: '13px',
+                                        },
+                                    }}
+                                />
+                            )}
+                            componentsProps={{
+                                paper: {
+                                    sx: {
                                         fontSize: '13px',
-                                    }
-                                }} />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 250,
                                     },
                                 },
                             }}
-                        >
-                            {productDropdown?.length > 0 ? (
-                                productDropdown.map((procedure, index) => (
-                                    <MenuItem
-                                        key={procedure?.productUuid || index}
-                                        value={procedure?.productName}
-                                        sx={{ fontSize: "13px", display: "flex", justifyContent: "space-between" }}
-                                    >
-                                        {procedure?.productName} <InventoryIcon sx={{ color: "grey", fontSize: "13px" }} />
-                                    </MenuItem>
-                                ))
-                            ) :
-                                <MenuItem sx={{ fontSize: "13px" }}>No Options</MenuItem>
-                            }
-                        </Select>
-                    </FormControl>
+                        />
+                    </Box>
                 </Box>
 
                 <Box>
-                    <Box sx={{ display: selectedDropdown?.length > 0 ? "block" : "none" }}>
-                        <Box sx={{ flexBasis: "16.6667%", flexGrow: "0", maxWidth: "16.6667%", display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "16px", paddingTop: "16px" }}>
-                            <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "14px" }}>Product name</Typography>
-                            <Typography variant="span" sx={{ fontWeight: "400", fontSize: "14px" }} >{selectedDropdown}</Typography>
-                        </Box>
+                    <Box sx={{ display: selectedDropdown ? "block" : "none" }}>
+                        <Box sx={{display:"flex",alignItems:"center"}}>
+                            <Box sx={{ flexBasis: "16.6667%", flexGrow: "0", maxWidth: "16.6667%", display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "16px", paddingTop: "16px" }}>
+                                <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "14px" }}>Product name</Typography>
+                                <Typography variant="span" sx={{ fontWeight: "400", fontSize: "14px" }} >{selectedDropdown?.productName}</Typography>
+                            </Box>
 
-                        <Box>
-                            <Box sx={{ display: "flex", width: "100%" }}>
-                                <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
-                                    <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Unit</Typography>
-                                    <Box sx={{ marginTop: "8px" }}>
-                                        <TextField
-                                            id="unit"
-                                            name="unit"
-                                            type="number"
-                                            value={productFormInputValue.unit}
-                                            onChange={handleChange(setProductFormInputValue)}
-                                            placeholder="Qty"
-                                            variant="outlined"
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: false,
-                                                },
-                                            }}
-                                            sx={{
-                                                width: "70px",
-                                                "& .MuiInputBase-root": {
-                                                    height: "35px",
-                                                },
-                                                "& .MuiOutlinedInput-input": {
-                                                    fontSize: "14px",
-                                                },
-                                                "& .MuiInputBase-input::placeholder": {
-                                                    fontSize: "13px",
-                                                },
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }} >
-                                    <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Price(INR)</Typography>
-                                    <Box sx={{ marginTop: "8px" }}>
-                                        <TextField
-                                            id="price"
-                                            name="price"
-                                            type="number"
-                                            value={productFormInputValue.price}
-                                            o onChange={handleChange(setProductFormInputValue)}
-                                            placeholder="Price"
-                                            variant="outlined"
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: false,
-                                                },
-                                            }}
-                                            sx={{
-                                                width: "90px",
-                                                "& .MuiInputBase-root": {
-                                                    height: "35px",
-                                                },
-                                                "& .MuiOutlinedInput-input": {
-                                                    fontSize: "14px",
-                                                },
-                                                "& .MuiInputBase-input::placeholder": {
-                                                    fontSize: "13px",
-                                                },
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
-                                    <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Discount</Typography>
-                                    <Box sx={{ marginTop: "8px" }}>
-                                        <TextField
-                                            id="discount"
-                                            name="discount"
-                                            type="number"
-                                            value={productFormInputValue.discount}
-                                            onChange={handleChange(setProductFormInputValue)}
-                                            placeholder="Discount"
-                                            variant="outlined"
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: false,
-                                                },
-                                            }}
-                                            sx={{
-                                                width: "100px",
-                                                "& .MuiInputBase-root": {
-                                                    height: "35px",
-                                                },
-                                                "& .MuiOutlinedInput-input": {
-                                                    fontSize: "14px",
-                                                },
-                                                "& .MuiInputBase-input::placeholder": {
-                                                    fontSize: "13px",
-                                                },
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
-                                    <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Discount type</Typography>
-                                    <Box sx={{ marginTop: "8px" }}>
-                                        <TextField
-                                            id="discountUnit"
-                                            name="discountUnit"
-                                            value={productFormInputValue.discountUnit.currency}
-                                            onChange={(e) => handleDiscountUpdate(setProductFormInputValue)(e.target.value)}
-                                            select
-                                            defaultValue="%"
-                                            sx={{
-                                                width: "130px",
-                                                "& .MuiInputBase-root": {
-                                                    height: "35px",
-                                                },
-                                                "& .MuiOutlinedInput-input": {
-                                                    fontSize: "13px",
-                                                },
-                                            }}
-                                        >
-                                            {discountType.map((option, index) => (
-                                                <MenuItem key={index} value={option.currency}>
-                                                    {option.currency}
-                                                </MenuItem>
-                                            ))}
-                                        </TextField>
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
-                                    <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Tax</Typography>
-                                    <Box sx={{ marginTop: "8px" }}>
-                                        <FormControl sx={{ width: 170 }}>
-                                            <Select
-                                                labelId="demo-multiple-chip-label"
-                                                id="demo-multiple-chip"
-                                                multiple
-                                                value={productTaxSelected}
-                                                onChange={(event) => {
-                                                    const selectedValues = event.target.value;
-                                                    setProductTaxSelected(selectedValues);
-                                                    handleTaxUpdate(setProductFormInputValue)(selectedValues);
-                                                }}
-                                                renderValue={(selected) => (
-                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, fontSize: "3px" }}>
-                                                        {selected.map((tax) => (
-                                                            <Chip
-                                                                sx={{ fontSize: "10px" }}
-                                                                key={tax.taxUuid}
-                                                                label={`${tax.taxName} (${tax.taxPercent}%)`}
-                                                                onDelete={() => {
-                                                                    handleDelete(tax.taxUuid);
-                                                                }}
-                                                                deleteIcon={
-                                                                    <CancelIcon
-                                                                        sx={{ width: 20, height: 20, cursor: "pointer" }}
-                                                                    />
-                                                                }
-                                                            />
-
-                                                        ))}
-                                                    </Box>
-                                                )}
-                                                sx={{
-                                                    "& .MuiSelect-select": {
-                                                        padding: "6px 8px",
+                            <Box>
+                                <Box sx={{ display: "flex", width: "100%" }}>
+                                    <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
+                                        <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Unit</Typography>
+                                        <Box sx={{ marginTop: "8px" }}>
+                                            <TextField
+                                                id="unit"
+                                                name="unit"
+                                                type="number"
+                                                value={productFormInputValue.unit}
+                                                onChange={handleChange(setProductFormInputValue)}
+                                                placeholder="Qty"
+                                                variant="outlined"
+                                                slotProps={{
+                                                    inputLabel: {
+                                                        shrink: false,
                                                     },
-                                                    width: "170px",
+                                                }}
+                                                sx={{
+                                                    width: "70px",
                                                     "& .MuiInputBase-root": {
-                                                        height: "auto",
+                                                        height: "35px",
+                                                    },
+                                                    "& .MuiOutlinedInput-input": {
+                                                        fontSize: "14px",
+                                                    },
+                                                    "& .MuiInputBase-input::placeholder": {
+                                                        fontSize: "13px",
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }} >
+                                        <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Price(INR)</Typography>
+                                        <Box sx={{ marginTop: "8px" }}>
+                                            <TextField
+                                                id="price"
+                                                name="price"
+                                                type="number"
+                                                value={productFormInputValue.price}
+                                                o onChange={handleChange(setProductFormInputValue)}
+                                                placeholder="Price"
+                                                variant="outlined"
+                                                slotProps={{
+                                                    inputLabel: {
+                                                        shrink: false,
+                                                    },
+                                                }}
+                                                sx={{
+                                                    width: "90px",
+                                                    "& .MuiInputBase-root": {
+                                                        height: "35px",
+                                                    },
+                                                    "& .MuiOutlinedInput-input": {
+                                                        fontSize: "14px",
+                                                    },
+                                                    "& .MuiInputBase-input::placeholder": {
+                                                        fontSize: "13px",
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
+                                        <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Discount</Typography>
+                                        <Box sx={{ marginTop: "8px" }}>
+                                            <TextField
+                                                id="discount"
+                                                name="discount"
+                                                type="number"
+                                                value={productFormInputValue.discount}
+                                                onChange={handleChange(setProductFormInputValue)}
+                                                placeholder="Discount"
+                                                variant="outlined"
+                                                slotProps={{
+                                                    inputLabel: {
+                                                        shrink: false,
+                                                    },
+                                                }}
+                                                sx={{
+                                                    width: "100px",
+                                                    "& .MuiInputBase-root": {
+                                                        height: "35px",
+                                                    },
+                                                    "& .MuiOutlinedInput-input": {
+                                                        fontSize: "14px",
+                                                    },
+                                                    "& .MuiInputBase-input::placeholder": {
+                                                        fontSize: "13px",
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
+                                        <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Discount type</Typography>
+                                        <Box sx={{ marginTop: "8px" }}>
+                                            <TextField
+                                                id="discountUnit"
+                                                name="discountUnit"
+                                                value={productFormInputValue.discountUnit.currency}
+                                                onChange={(e) => handleDiscountUpdate(setProductFormInputValue)(e.target.value)}
+                                                select
+                                                defaultValue="%"
+                                                sx={{
+                                                    width: "130px",
+                                                    "& .MuiInputBase-root": {
+                                                        height: "35px",
                                                     },
                                                     "& .MuiOutlinedInput-input": {
                                                         fontSize: "13px",
                                                     },
                                                 }}
                                             >
-                                                {taxType.map((option, index) => (
-                                                    <MenuItem key={index} value={option} sx={{ fontSize: "13px" }}>
-                                                        {option.taxName} - {option.taxPercent}%
+                                                {discountType.map((option, index) => (
+                                                    <MenuItem key={index} value={option.currency}>
+                                                        {option.currency}
                                                     </MenuItem>
                                                 ))}
-                                            </Select>
-                                        </FormControl>
+                                            </TextField>
+                                        </Box>
                                     </Box>
-                                </Box>
 
-                                <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "20px", paddingTop: "35px" }}>
-                                    <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>Total(INR)</Typography>
-                                    <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>{productTotalPrice}</Typography>
-                                </Box>
+                                    <Box sx={{ paddingLeft: "16px", paddingTop: "16px" }}>
+                                        <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "13px" }}>Tax</Typography>
+                                        <Box sx={{ marginTop: "8px" }}>
+                                            <FormControl sx={{ width: 170 }}>
+                                                <Select
+                                                    labelId="demo-multiple-chip-label"
+                                                    id="demo-multiple-chip"
+                                                    multiple
+                                                    value={productTaxSelected}
+                                                    onChange={(event) => {
+                                                        const selectedValues = event.target.value;
+                                                        setProductTaxSelected(selectedValues);
+                                                        handleTaxUpdate(setProductFormInputValue)(selectedValues);
+                                                    }}
+                                                    renderValue={(selected) => (
+                                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, fontSize: "3px" }}>
+                                                            {selected.map((tax) => (
+                                                                <Chip
+                                                                    sx={{ fontSize: "10px" }}
+                                                                    key={tax.taxUuid}
+                                                                    label={`${tax.taxName} (${tax.taxPercent}%)`}
+                                                                    onDelete={() => {
+                                                                        handleDelete(tax.taxUuid);
+                                                                    }}
+                                                                    deleteIcon={
+                                                                        <CancelIcon
+                                                                            sx={{ width: 20, height: 20, cursor: "pointer" }}
+                                                                        />
+                                                                    }
+                                                                />
 
-                                <Box sx={{ paddingLeft: "20px", paddingTop: "50px" }}>
-                                    <Button onClick={handleAddProductTable} sx={{ color: "#fff", padding: "4px 20px", backgroundColor: "#0062DD", borderRadius: "25px", textTransform: "none", fontSize: "13px" }}>
-                                        <SvgIcon sx={{ color: "#fff" }}>
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z" />
-                                        </SvgIcon>
-                                        Add
-                                    </Button>
+                                                            ))}
+                                                        </Box>
+                                                    )}
+                                                    sx={{
+                                                        "& .MuiSelect-select": {
+                                                            padding: "6px 8px",
+                                                        },
+                                                        width: "170px",
+                                                        "& .MuiInputBase-root": {
+                                                            height: "auto",
+                                                        },
+                                                        "& .MuiOutlinedInput-input": {
+                                                            fontSize: "13px",
+                                                        },
+                                                    }}
+                                                >
+                                                    {taxType.map((option, index) => (
+                                                        <MenuItem key={index} value={option} sx={{ fontSize: "13px" }}>
+                                                            {option.taxName} - {option.taxPercent}%
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "20px", paddingTop: "35px" }}>
+                                        <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>Total(INR)</Typography>
+                                        <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>{productTotalPrice}</Typography>
+                                    </Box>
+
+                                    <Box sx={{ paddingLeft: "20px", paddingTop: "50px" }}>
+                                        <Button onClick={handleAddProductTable} sx={{ color: "#fff", padding: "4px 20px", backgroundColor: "#0062DD", borderRadius: "25px", textTransform: "none", fontSize: "13px" }}>
+                                            <SvgIcon sx={{ color: "#fff" }}>
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z" />
+                                            </SvgIcon>
+                                            Add
+                                        </Button>
+                                    </Box>
                                 </Box>
                             </Box>
                         </Box>
