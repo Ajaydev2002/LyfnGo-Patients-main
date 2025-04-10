@@ -52,6 +52,8 @@ const Billing = () => {
     const dispatch = useDispatch();
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
+    console.log("productDropdown", productDropdown);
+
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
@@ -87,48 +89,70 @@ const Billing = () => {
     const handleClickPost = async () => {
 
         try {
-            const inventoryItems = billingTable.map((item) => ({
-                custBillingCost: item?.cost || 0,
-                custBillingDiscount: item?.discount || 0,
-                custBillingTax: 0,
-                custBillingTotal: item?.total || 0,
-                custBillingUnit: item?.qty || 1,
-                discountType: "₹",
-                orderName: [
-                    item?.treatmentName || ""
-                ],
-                inventoryItemUuid: [
-                    "frr8kcrd"
-                ],
-                productUuid: "",
-                taxUuid: [],
-                isProduct: false
-            }));
 
+            const serviceItems = billingTable.filter(item => item.type === 'service');
+            const productItems = billingTable.filter(item => item.type === 'product');
 
-            let formattedData = encryption(
-                {
-                    amtPaid: billingTotal,
-                    balance: "0.00",
-                    balanceAmtOnRefund: 0,
-                    bankName: null,
-                    cardNo: null,
-                    chequeNo: null,
-                    isUpi: false,
-                    custInvoiceNo: invoiceNo,
-                    custItems: [],
-                    inventoryItems: inventoryItems,
-                    membershipItems: [],
-                    custPaymentNo: reciptNo,
-                    customInvoiceId: false,
-                    customRecieptId: false,
-                    modeUuid: "u3rlzscc",
-                    paymentMode: "Cash",
-                    paymentRefNo: null,
-                    pending: false,
-                    vendorFee: ""
-                }
-            );
+            let formattedData = encryption({
+                amtPaid: parseFloat(billingTotal).toFixed(2),
+                balance: "0.00",
+                balanceAmtOnRefund: 0,
+                bankName: null,
+                cardNo: null,
+                chequeNo: null,
+                isUpi: false,
+                custInvoiceNo: invoiceNo,
+
+                custItems: serviceItems?.length > 0 ? serviceItems.map(item => ({
+                    custBillingCost: parseFloat(item.cost) || 0,
+                    custBillingDiscount: parseFloat(item.discount) || 0,
+                    discountType: item.discountUnit.currency,
+                    custBillingTax: parseFloat(
+                        item.taxInfo.reduce((acc, tax) => {
+                            const percent = parseFloat(tax.taxPercent || 0);
+                            return acc + percent;
+                        }, 0).toFixed(2)
+                    ),
+                    custBillingTotal: parseFloat(parseFloat(item.total || 0).toFixed(2)),
+                    custBillingUnit: parseFloat(item.qty),
+                    newProcedure: false,
+                    orderName: item.treatmentName,
+                    procedureUuid: item.procedureUuid || "",
+                    taxUuid: [],
+                    isProcedure: true,
+                    isLabOrder: false,
+                })) : [],
+
+                inventoryItems: productItems?.length > 0 ? productItems.map(item => ({
+                    custBillingCost: parseFloat(item.cost) || 0,
+                    custBillingDiscount: parseFloat(item.discount) || 0,
+                    custBillingTax: parseFloat(
+                        item.taxInfo.reduce((acc, tax) => {
+                            const percent = parseFloat(tax.taxPercent || 0);
+                            return acc + percent;
+                        }, 0).toFixed(2)
+                    ),
+                    custBillingTotal: parseFloat(parseFloat(item.total || 0).toFixed(2)),
+                    custBillingUnit: parseFloat(item.qty) || 0,
+                    discountType: item.discountUnit?.currency || "₹",
+                    orderName: [item.treatmentName || ""],
+                    inventoryItemUuid: [
+                    ],
+                    productUuid: "",
+                    taxUuid: [],
+                    isProduct: false
+                })) : [],
+
+                membershipItems: [],
+                custPaymentNo: reciptNo,
+                customInvoiceId: false,
+                customRecieptId: false,
+                modeUuid: "u3rlzscc",
+                paymentMode: "Cash",
+                paymentRefNo: null,
+                pending: false,
+                vendorFee: ""
+            });
 
             const response = await axios.post(
                 `https://flash.lyf.yoga/files/charting/BillingOrder/saveBilling/${appointmentUuid}?tentUserUuid=6f22fe5v`,
@@ -333,6 +357,7 @@ const Billing = () => {
                 taxPercent: tax.taxPercent,
             })) || [],
             total: priceWithTax,
+            type: 'service',
         }
 
         setBillingTable((prev) => [
@@ -379,6 +404,7 @@ const Billing = () => {
                 taxPercent: tax.taxPercent,
             })) || [],
             total: priceWithTax,
+            type: 'product',
         }
 
         setBillingTable((prev) => [
@@ -593,7 +619,7 @@ const Billing = () => {
                     </FormControl>
                 </Box>
 
-                <Box sx={{ display: treatmentName.length > 0 ? "block" : "none" }}>
+                <Box sx={{ display: treatmentName?.length > 0 ? "block" : "none" }}>
 
                     <Box sx={{ display: "flex", width: "100%" }}>
 
@@ -841,14 +867,14 @@ const Billing = () => {
                                 },
                             }}
                         >
-                            {productDropdown.length > 0 ? (
+                            {productDropdown?.length > 0 ? (
                                 productDropdown.map((procedure, index) => (
                                     <MenuItem
                                         key={procedure?.productUuid || index}
                                         value={procedure?.productName}
-                                        sx={{ fontSize: "13px",display:"flex",justifyContent:"space-between" }}
+                                        sx={{ fontSize: "13px", display: "flex", justifyContent: "space-between" }}
                                     >
-                                        {procedure?.productName} <InventoryIcon sx={{color:"grey",fontSize:"13px"}}/>
+                                        {procedure?.productName} <InventoryIcon sx={{ color: "grey", fontSize: "13px" }} />
                                     </MenuItem>
                                 ))
                             ) :
@@ -859,7 +885,7 @@ const Billing = () => {
                 </Box>
 
                 <Box>
-                    <Box sx={{ display: selectedDropdown.length > 0 ? "block" : "none" }}>
+                    <Box sx={{ display: selectedDropdown?.length > 0 ? "block" : "none" }}>
                         <Box sx={{ flexBasis: "16.6667%", flexGrow: "0", maxWidth: "16.6667%", display: "flex", flexDirection: "column", gap: "10px", paddingLeft: "16px", paddingTop: "16px" }}>
                             <Typography variant="body 1" sx={{ fontWeight: "400", fontSize: "14px" }}>Product name</Typography>
                             <Typography variant="span" sx={{ fontWeight: "400", fontSize: "14px" }} >{selectedDropdown}</Typography>
@@ -1083,20 +1109,20 @@ const Billing = () => {
                             <TableCell sx={{ border: "1.5px solid #ddd", textAlign: "center", fontSize: "12px" }}>Action</TableCell>
                         </TableRow>
                     </TableHead>
-                    {billingTable.length > 0 ? (
+                    {billingTable?.length > 0 ? (
                         <TableBody>
                             {billingTable.map((item, index) => (
                                 <TableRow>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.treatmentName ? item?.treatmentName : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center", color: item?.type === 'service' ? '#1AC698' : '#E55C26' }}>{item?.treatmentName ? item?.treatmentName : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.qty ? item?.qty : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>-</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.cost ? item?.cost : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>₹ {item?.cost ? item?.cost : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount ? `${item?.discount} ${item?.discountUnit?.currency}` : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         {item?.taxInfo?.map((tax) => `${tax.taxName} (${tax.taxPercent}%)`).join(", ")}
                                     </TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.total}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>₹{item?.total ? parseFloat(item?.total || 0).toFixed(2) : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
                                         <IconButton sx={{ color: "rgb(244, 67, 54)" }} onClick={() => handleDelete(index)}>
                                             <HighlightOffIcon />
