@@ -36,6 +36,8 @@ const PatientInfo = () => {
 
     const PatientsDetails = patientsDetails?.data;
 
+    console.log("PatientsDetails",PatientsDetails);
+
     return (
         loading ? <PageLoading /> :
             <Box sx={{ padding: 2, width: "100%" }}>
@@ -176,7 +178,7 @@ const PatientInfo = () => {
                             <Typography variant="body1" sx={{ color: "#727272", fontWeight: "400", fontSize: "12px" }}>Address</Typography>
                             <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500", paddingTop: "3px" }}>{PatientsDetails?.address1 ? PatientsDetails?.address1 : ''}</Typography>
                             <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.state?.mastState ? PatientsDetails?.state?.mastState : ''}</Typography>
-                            <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.country.country ? PatientsDetails?.country.country : ''}</Typography>
+                            <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.country?.country || ''}</Typography>
                         </Box>
                         <Box sx={{ paddingTop: "10px" }}>
                             <Typography variant="body1" sx={{ color: "#727272", fontWeight: "400", fontSize: "12px" }}>Pincode</Typography>
