@@ -54,9 +54,6 @@ const VitalSign = () => {
 
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    console.log("saveVitalSigns", saveVitalSigns)
-
-
     useEffect(() => {
         axios.get(
             `https://flash.lyf.yoga/files/charting/api/vitalSign/${appointmentUuid}`,
