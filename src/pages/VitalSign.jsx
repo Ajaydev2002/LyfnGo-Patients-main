@@ -592,9 +592,6 @@ const VitalSign = () => {
                                             },
                                             "& .MuiInputLabel-root": {
                                                 fontSize: "13px",
-                                                top: "50%",
-                                                transform: "translateY(-50%)",
-                                                paddingLeft: "20px"
                                             },
                                         }}
                                         inputProps={{ maxLength: 5 }}

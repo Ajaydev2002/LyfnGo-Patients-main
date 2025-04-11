@@ -147,7 +147,6 @@ const Prescription = () => {
     const Template = drugName?.templatesDropdownResponse;
     const Drugs = drugName?.inventoryDropdownResponse;
 
-
     //API to get the details of the prescription to show in the tabel
     useEffect(() => {
         axios.get(`https://flash.lyf.yoga/files/charting/api/ePrescribe/${appointmentUuid}`,
@@ -163,7 +162,7 @@ const Prescription = () => {
                 setDietList(response?.data?.data?.globalInstruction)
             })
             .catch((error) => {
-                console.error("Error fetching data drugname :", error.message);
+                console.error("Error fetching data Prescription :", error.message);
             });
     }, [appointmentUuid]);
 
