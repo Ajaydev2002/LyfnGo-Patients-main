@@ -9,6 +9,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { getAppointmentDetails } from "../api/Appointment";
 import { useDispatch } from "react-redux";
 import { savePatientData } from "../redux/PatientsSlice";
+import { Note } from "@mui/icons-material";
 
 
 
@@ -30,9 +31,11 @@ const LabOrder = () => {
     });
     const [isDisabled, setIsDisabled] = useState(false);
     const [appointmentData, setAppointmentData] = useState([]);
+    const [notes, setNotes] = useState();
 
     const dispatch = useDispatch();
 
+    console.log("notes", notes)
 
     //To get appointment details
     useEffect(() => {
@@ -162,6 +165,7 @@ const LabOrder = () => {
                 tax_percent: tax.tax_percent,
             })) || [],
             total_price: priceWithTax.toFixed(2),
+            labOrdernotes: notes
         }
 
         setTabelLabOrder((prev) => {
@@ -233,7 +237,6 @@ const LabOrder = () => {
                 console.error("Error fetching data discountType", error.message)
             })
     }, [])
-
 
     //API to get the lab order details to display in tabel 
     useEffect(() => {
@@ -553,6 +556,9 @@ const LabOrder = () => {
                     <OutlinedInput
                         name="Add Notes"
                         placeholder="Add Notes"
+                        onChange={(event) => {
+                            setNotes(event.target.value)
+                        }}
                         sx={{
                             width: "100%",
                             height: "35px",
@@ -587,7 +593,12 @@ const LabOrder = () => {
                             {tabelLabOrder.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</TableCell>
-                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_name ? item?.lab_order_name : "-"}</TableCell>
+                                    <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>
+                                        <Box sx={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+                                            <Typography variant="body2"> {item?.lab_order_name ? item?.lab_order_name : "-"}</Typography>
+                                            <Typography variant="body2" sx={{fontWeight:"600"}}>{item?.labOrdernotes}</Typography>
+                                        </Box>
+                                    </TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_unit ? item?.lab_order_unit : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.lab_order_price ? item?.lab_order_price : "-"}</TableCell>
                                     <TableCell sx={{ border: "1.5px solid #ddd", padding: "8px", textAlign: "center" }}>{item?.discount ? `${item.discount} ${item?.discount_type}` : "-"}</TableCell>
