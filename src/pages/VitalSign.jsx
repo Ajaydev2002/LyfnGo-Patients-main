@@ -18,6 +18,7 @@ import { unit } from "../consts/VitalsignNav";
 import { BPunit } from "../consts/VitalsignNav";
 import { TemperatureArea } from "../consts/VitalsignNav";
 import { decryption } from "../utils";
+import { useMemo } from "react";
 
 
 
@@ -34,7 +35,6 @@ const VitalSign = () => {
 
     const [appointmentData, setAppointmentData] = useState([]);
     const [saveVitalSigns, setSaveVitalSigns] = useState([]);
-
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -52,10 +52,14 @@ const VitalSign = () => {
         fetchAndSave();
     }, [dispatch]);
 
+    const appointmentUuid = appointmentData[0]?.appointmentUuid
+
+    console.log("saveVitalSigns", saveVitalSigns)
+
 
     useEffect(() => {
         axios.get(
-            `https://flash.lyf.yoga/files/charting/api/vitalSign/5kp6mpx8`,
+            `https://flash.lyf.yoga/files/charting/api/vitalSign/${appointmentUuid}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -70,49 +74,51 @@ const VitalSign = () => {
             .catch((error) => {
                 console.error("Error fetching data:", error.message);
             });
-    }, []);
+    }, [appointmentUuid]);
+
+    const initialValues = useMemo(() => ({
+        assignedOn: dayjs(),
+        weight: saveVitalSigns?.weight ? Number(saveVitalSigns.weight) : "",
+        weightUnit: "",
+        bmi: saveVitalSigns?.bmi ? Number(saveVitalSigns.bmi) : "",
+        bmiStatus: saveVitalSigns?.bmiStatus ? saveVitalSigns.bmiStatus : "",
+        height: saveVitalSigns?.height ? Number(saveVitalSigns.height) : "",
+        heightUnit: "",
+        bpSys: saveVitalSigns?.bp?.[0]?.bpSys ? Number(saveVitalSigns.bp[0].bpSys) : "",
+        bpDystole: saveVitalSigns?.bp?.[0]?.bpDystole ? Number(saveVitalSigns.bp[0].bpDystole) : "",
+        bpUnit: "sitting",
+        pulse: saveVitalSigns?.pulse ? Number(saveVitalSigns.pulse) : "",
+        pulseUnit: "",
+        respiratory: saveVitalSigns?.respiratory ? Number(saveVitalSigns.respiratory) : "",
+        respiratoryUnit: "",
+        temperature: saveVitalSigns?.temperature ? Number(saveVitalSigns.temperature) : "",
+        temperatureUnit: "C",
+        custUuid: "",
+        leanBodyMass: "",
+        fat: saveVitalSigns?.fat ? Number(saveVitalSigns.fat) : "",
+        fatUnit: "",
+        visceralFat: saveVitalSigns?.visceralFat ? Number(saveVitalSigns.visceralFat) : "",
+        rateMetabolism: saveVitalSigns?.rateMetabolism ? Number(saveVitalSigns.rateMetabolism) : "",
+        rateMetabolismUnit: "",
+        neck: saveVitalSigns?.neck ? Number(saveVitalSigns.neck) : "",
+        neckUnit: "inch",
+        upperArmUnit: "inch",
+        upperArm: saveVitalSigns?.upperArm ? Number(saveVitalSigns.upperArm) : "",
+        chest:  saveVitalSigns?.chest ? Number(saveVitalSigns.chest) : "",
+        chestUnit: "inch",
+        hip:  saveVitalSigns?.hip ? Number(saveVitalSigns.hip) : "",
+        hipUnit: "inch",
+        waist:  saveVitalSigns?.waist ? Number(saveVitalSigns.waist) : "",
+        waistUnit: "inch",
+        thigh: saveVitalSigns?.thigh ? Number(saveVitalSigns.thigh) : "",
+        thighUnit: "inch",
+        bodyFat:  saveVitalSigns?.bodyFat ? Number(saveVitalSigns.bodyFat) : "",
+        bodyAge:  saveVitalSigns?.bodyAge ? Number(saveVitalSigns.bodyAge) : "",
+    }), [saveVitalSigns]);
 
     const formik = useFormik({
-        initialValues: {
-            assignedOn: dayjs(),
-            weight: saveVitalSigns?.weight ? Number(saveVitalSigns.weight) : "",
-            weightUnit: "",
-            bmi: "",
-            bmiStatus: "",
-            height: saveVitalSigns?.height ? Number(saveVitalSigns.height) : "",
-            heightUnit: "",
-            bpSys: "",
-            bpDystole: "",
-            bpUnit: "sitting",
-            pulse: "",
-            pulseUnit: "",
-            respiratory: "",
-            respiratoryUnit: "",
-            temperature: "",
-            temperatureUnit: "C",
-            custUuid: "",
-            leanBodyMass: "",
-            fat: "",
-            fatUnit: "",
-            visceralFat: "",
-            rateMetabolism: "",
-            rateMetabolismUnit: "",
-            neck: "",
-            neckUnit: "inch",
-            upperArmUnit: "inch",
-            upperArm: "",
-            chest: "",
-            chestUnit: "inch",
-            hip: "",
-            hipUnit: "inch",
-            waist: "",
-            waistUnit: "inch",
-            thigh: "",
-            thighUnit: "inch",
-            bodyFat: "",
-            bodyAge: "",
-        },
-        validationSchema: validationScheme,
+        enableReinitialize: true,
+        initialValues,
         onSubmit: async (values, { setSubmitting, setValues }) => {
 
             let decryptKey = encryption({
@@ -210,9 +216,7 @@ const VitalSign = () => {
             } else {
                 status = "Obese";
             }
-
             formik.setFieldValue("bmiStatus", status);
-
         }
     }, [formik.values.bmi])
 

@@ -11,7 +11,6 @@ import { getAppointmentDetails } from "../api/Appointment";
 import { useDispatch } from "react-redux";
 import { savePatientData } from "../redux/PatientsSlice";
 import { decryption } from "../utils";
-import InventoryIcon from '@mui/icons-material/Inventory';
 
 
 const Billing = () => {
@@ -50,6 +49,7 @@ const Billing = () => {
     const [invoiceNo, setInvoiceNo] = useState([]);
     const [reciptNo, setReciptNo] = useState([]);
     const dispatch = useDispatch();
+    
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
     useEffect(() => {
