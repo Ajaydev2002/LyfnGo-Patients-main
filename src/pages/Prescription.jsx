@@ -41,13 +41,16 @@ const Prescription = () => {
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
     const dispatch = useDispatch();
-    
+
+    console.log("drugSelected",drugSelected);
+    console.log("showDetails",showDetails);
+
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
                 const response = await getAppointmentDetails();
                 dispatch(savePatientData(response));
-                
+
                 setAppointmentData(response?.data?.data);
 
             } catch (error) {
@@ -83,6 +86,7 @@ const Prescription = () => {
             beforeFood: formValues.Addintake,
             duration: formValues.duration,
             durationUnit: formValues.Type,
+            itemUuid: drugSelected?.itemUuid,
         }
 
         setShowDetails((prev) => [
@@ -162,7 +166,6 @@ const Prescription = () => {
             });
     }, [appointmentUuid]);
 
-
     //this is to save the updated changes in the prescription
     const handleClickPost = async () => {
 
@@ -171,24 +174,24 @@ const Prescription = () => {
                 customDosage: null,
                 dosageFour: item?.dosageFour || null,
                 drugName: item?.drugName || "",
-                duration: item?.duration || "",
-                durationUnit: item?.Type || "Days",
-                eprescribeUuid: "",
-                frequency: "1",
-                instruction: item?.instruction || "",
+                duration: item?.duration || null,
+                durationUnit: item?.durationUnit || "Days",
+                eprescribeUuid: null,
+                frequency: null,
+                instruction: "",
                 isDefault: false,
                 itemUuid: item?.itemUuid || "",
-                manufactureName: item?.manufactureName || "-",
-                morning: item?.morning || "0",
-                noon: item?.noon || "0",
-                night: item?.night || "0",
-                removed: false,
-                strength: item?.strength || "",
-                strengthUnit: item?.strengthUnit || "",
+                manufactureName: item?.manufactureName || "",
+                morning: item?.morning || "",
+                night: item?.night || "",
+                noon: item?.noon || "",
+                remove: false,
+                strength: "",
+                strengthUnit: "",
             }))
 
             const payload = {
-                globalInstruction: dietList.map(item => item) || "",
+                globalInstruction: null,
                 isDraft: false,
                 isMailSend: true,
                 isNotifiedPrescription: true,

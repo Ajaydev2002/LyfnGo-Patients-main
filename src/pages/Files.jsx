@@ -70,7 +70,7 @@ const Files = () => {
                     },
                 }
             )
-            alert("saved successfilly")
+            alert("Files Saved Successfilly")
         }
         catch (error) {
             console.error("API Error:", error?.response?.data || error.message);

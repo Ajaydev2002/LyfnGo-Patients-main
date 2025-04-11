@@ -97,7 +97,7 @@ const Procedure = () => {
     //To add the input value to the form
     const handleAddDetail = () => {
         if (!procedureformValues || !procedureformValues.unit || !procedureformValues.price) {
-            alert("please fill the details");
+            alert("Please fill the details");
             return;
         }
 

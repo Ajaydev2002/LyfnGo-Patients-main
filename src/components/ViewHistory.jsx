@@ -13,14 +13,13 @@ import BodyFat from "../pages/ChartSection/BodyFat";
 import BmiChart from "../pages/ChartSection/BmiChart";
 
 
-const ViewHistory = ({setShowViewHistory}) => {
+const ViewHistory = ({ setShowViewHistory }) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [tabelVitalSigns, setTabelVitalSigns] = useState([]);
     const [appointmentDetails, setAppointmentDetails] = useState([]);
 
-    
     const exitViewHistory = () => {
         setShowViewHistory(false);
     };
@@ -76,16 +75,18 @@ const ViewHistory = ({setShowViewHistory}) => {
 
 
     return (
-        <Box sx={{ backgroundColor: "rgb(233, 240, 254)", marginTop: "5px" }}>
+        <Box sx={{ backgroundColor: "rgb(233, 240, 254)" }}>
             <Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "93%", padding: "8px", backgroundColor: "#0062DD", position: "fixed",zIndex:"500" }}>
-                    <Typography variant="body1" sx={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>Total Number of Visits: {appointmentDetails?.totalVisit}</Typography>
+                <Box sx={{backgroundColor:"#fff",paddingTop: "5px",zIndex:"500"}}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "93%", padding: "8px", backgroundColor: "#0062DD", position: "fixed", zIndex: "500"}}>
+                        <Typography variant="body1" sx={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>Total Number of Visits: {appointmentDetails?.totalVisit}</Typography>
 
-                    <IconButton onClick={exitViewHistory}>
-                        <SvgIcon sx={{ color: "#fff", fontSize: "24px" }}>
-                            <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z" />
-                        </SvgIcon>
-                    </IconButton>
+                        <IconButton onClick={exitViewHistory}>
+                            <SvgIcon sx={{ color: "#fff", fontSize: "24px" }}>
+                                <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z" />
+                            </SvgIcon>
+                        </IconButton>
+                    </Box>
                 </Box>
 
                 <Box sx={{ marginInline: "28px", paddingTop: "70px", }}>
