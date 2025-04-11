@@ -36,6 +36,7 @@ const ClinicalNotes = () => {
     const [diaSelectedValues, setDiaSelectedValues] = useState([]);
     const [noteSelectedValues, setNoteSelectedValues] = useState([]);
     const [appointmentData, setAppointmentData] = useState([]);
+    const [getId, setGetId] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -144,25 +145,25 @@ const ClinicalNotes = () => {
                         categoryId: 1,
                         description: selectedValue.map(item => item),
                         fileMetaDataList: [],
-                        notesCatalogUuid: "bb4xq7c7"
+                        notesCatalogUuid: getId[0]?.uuid
                     },
                     {
                         categoryId: 2,
                         description: obsSelectedValues.map(item => item),
                         fileMetaDataList: [],
-                        notesCatalogUuid: "ij7uhwca"
+                        notesCatalogUuid: getId[1]?.uuid
                     },
                     {
                         categoryId: 3,
                         description: diaSelectedValues.map(item => item),
                         fileMetaDataList: [],
-                        notesCatalogUuid: "tasid1h7"
+                        notesCatalogUuid: getId[2]?.uuid
                     },
                     {
                         categoryId: 4,
                         description: noteSelectedValues.map(item => item),
                         fileMetaDataList: [],
-                        notesCatalogUuid: "5t0p23ll"
+                        notesCatalogUuid: getId[3]?.uuid
                     }
                 ])
 
@@ -177,7 +178,7 @@ const ClinicalNotes = () => {
                     }
                 }
             );
-            alert("clinical notes updated successfully!");
+            alert("Clinical notes updated successfully!");
         } catch (error) {
             console.error("clinical notes Error", error.response?.data || error.message);
             alert("Faild to update clinical notes");
@@ -218,7 +219,7 @@ const ClinicalNotes = () => {
     }
 
     //API to get the saved clincal notes to display in the table
-    useEffect(() => {
+    useEffect(() => {   
         axios.get(
             `https://flash.lyf.yoga/files/charting/api/clinicalNotes/${appointmentUuid}`,
             {
@@ -235,6 +236,7 @@ const ClinicalNotes = () => {
                     setObsSelectedValues(Descript.data.clinicalNotesGetDtoList[1]?.description || []);
                     setDiaSelectedValues(Descript.data.clinicalNotesGetDtoList[2]?.description || []);
                     setNoteSelectedValues(Descript.data.clinicalNotesGetDtoList[3]?.description || []);
+                    setGetId(Descript?.data?.clinicalNotesGetDtoList)
                 }
             })
             .catch((error) => {
