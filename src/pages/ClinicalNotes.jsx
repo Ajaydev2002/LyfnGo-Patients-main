@@ -240,7 +240,7 @@ const ClinicalNotes = () => {
             .catch((error) => {
                 console.error("Error fetching data:", error.message);
             });
-    }, []);
+    }, [appointmentUuid]);
 
 
     //Get API to Details of clinical notes

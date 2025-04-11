@@ -43,6 +43,8 @@ const Prescription = () => {
 
     const dispatch = useDispatch();
 
+    console.log("dietList",dietList)
+    
     useEffect(() => {
         const fetchAndSave = async () => {
             try {

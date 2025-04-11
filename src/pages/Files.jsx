@@ -33,8 +33,6 @@ const Files = () => {
 
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    console.log("appointmentUuid",appointmentUuid)
-
     //API to get the data to display the image
     useEffect(() => {
         axios.get(`https://flash.lyf.yoga/files/charting/api/files/${appointmentUuid}`,
