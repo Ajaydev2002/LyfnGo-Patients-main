@@ -84,8 +84,6 @@ const PatientInfo = () => {
                         </Box>
                     </Card>
 
-
-
                     <Card sx={{
                         height: "320px", overflow: "scroll", flex: 1, borderRadius: "8px", marginLeft: "16px", marginTop: "16px", border: "1px solid rgb(255, 255, 255)", boxShadow: "rgba(0, 0, 0, 0.2) 0px 0px 4px 0px", padding: "16px",
                         "&::-webkit-scrollbar": {
@@ -155,9 +153,7 @@ const PatientInfo = () => {
                             }
                         </Box>
                     </Card>
-
                 </Box>
-
 
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Card sx={{
@@ -180,7 +176,7 @@ const PatientInfo = () => {
                             <Typography variant="body1" sx={{ color: "#727272", fontWeight: "400", fontSize: "12px" }}>Address</Typography>
                             <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500", paddingTop: "3px" }}>{PatientsDetails?.address1 ? PatientsDetails?.address1 : ''}</Typography>
                             <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.state?.mastState ? PatientsDetails?.state?.mastState : ''}</Typography>
-                            <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.country ? PatientsDetails?.country : ''}</Typography>
+                            <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500" }}>{PatientsDetails?.country.country ? PatientsDetails?.country.country : ''}</Typography>
                         </Box>
                         <Box sx={{ paddingTop: "10px" }}>
                             <Typography variant="body1" sx={{ color: "#727272", fontWeight: "400", fontSize: "12px" }}>Pincode</Typography>
