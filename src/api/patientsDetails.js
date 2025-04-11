@@ -4,8 +4,6 @@ import { decryption } from "../utils";
 
 export const getPatientDetails = async (custUuid) => {
 
-    console.log("geting custUuid",custUuid)
-
     try {
         const response = await axios.get(
             `https://flash.lyf.yoga/api/customer/getCustomerMaster/${custUuid}`,

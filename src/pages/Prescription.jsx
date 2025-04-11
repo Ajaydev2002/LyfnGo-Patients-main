@@ -38,19 +38,16 @@ const Prescription = () => {
         Addintake: "After food",
     });
     const [appointmentData, setAppointmentData] = useState([]);
-
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
     const dispatch = useDispatch();
-
-    console.log("dietList",dietList)
     
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
                 const response = await getAppointmentDetails();
                 dispatch(savePatientData(response));
-
+                
                 setAppointmentData(response?.data?.data);
 
             } catch (error) {
@@ -126,7 +123,6 @@ const Prescription = () => {
             });
     }, []);
 
-
     //API to get the Drug and Template names
     useEffect(() => {
         axios.get("https://flash.lyf.yoga/files/charting/api/ePrescribe/getTemplateInventory/dropdown/for/jzxph5ql/6f22fe5v?searchKey=",
@@ -177,7 +173,7 @@ const Prescription = () => {
                 drugName: item?.drugName || "",
                 duration: item?.duration || "",
                 durationUnit: item?.Type || "Days",
-                eprescribeUuid: "zix5z5ns",
+                eprescribeUuid: "",
                 frequency: "1",
                 instruction: item?.instruction || "",
                 isDefault: false,
@@ -190,7 +186,6 @@ const Prescription = () => {
                 strength: item?.strength || "",
                 strengthUnit: item?.strengthUnit || "",
             }))
-
 
             const payload = {
                 globalInstruction: dietList.map(item => item) || "",
@@ -217,7 +212,6 @@ const Prescription = () => {
             alert("Faild to update Prescription");
         }
     }
-
 
     return (
         <Box sx={{ padding: "20px" }}>
