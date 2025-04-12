@@ -76,7 +76,7 @@ const Procedure = () => {
             const payload = formattedPrescriptions;
 
             const response = await axios.put(
-                "https://flash.lyf.yoga/files/charting/api/completeProcedure/103ygo7b",
+                `https://flash.lyf.yoga/files/charting/api/completeProcedure/${appointmentUuid}`,
                 payload,
                 {
                     headers: {
