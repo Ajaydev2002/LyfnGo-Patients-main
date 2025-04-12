@@ -10,6 +10,7 @@ import Procedure from "../pages/Procedure";
 import Appointment from "../pages/Appointment";
 import HealthBoard from "../pages/Healthboard";
 import Billing from "../pages/Billing";
+import NewPrescription from "../pages/NewPrescription";
 
 const PatientsDeatailsNav = [
     {
@@ -143,7 +144,7 @@ const PatientsDeatailsNav = [
         segment: '/Products',
         title: 'Products',
         img: "https://d1cdqhtb2bf9h4.cloudfront.net/B2B_Flash/Info_icons/Products_icon.svg",
-        component: HealthBoard,
+        component: NewPrescription,
     },
     {
         id: 20,

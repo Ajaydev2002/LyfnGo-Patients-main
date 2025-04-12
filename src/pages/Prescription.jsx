@@ -42,9 +42,6 @@ const Prescription = () => {
 
     const dispatch = useDispatch();
 
-    console.log("drugSelected",drugSelected);
-    console.log("showDetails",showDetails);
-
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
