@@ -2,31 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Box, IconButton, Tooltip, Typography, SvgIcon } from "@mui/material";
 import { useParams } from "react-router-dom";
 import PatientsDeatailsNav from "../consts/PatientsDetailsNav";
-import { useDispatch, useSelector } from "react-redux";
 import ViewHistory from "./ViewHistory";
 import { getPatientDetails } from "../api/patientsDetails";
-import { savePatientData } from "../redux/PatientsSlice";
 import { useNavigate } from "react-router-dom";
 
 const PatientsDeatails = () => {
 
     const { custUuid } = useParams();
-    const dispatch = useDispatch();
-    const { data, error, loading } = useSelector((state) => state.patients);
 
     const DefaultComponent = PatientsDeatailsNav.find(item => item.title === "Patient details")?.component;
     const [patientsSidebar, setPatientsSidebar] = useState(true);
     const [activeButton, setActiveButton] = useState("Patient details");
     const [selectedComponent, setSelectedComponent] = useState(DefaultComponent ? <DefaultComponent /> : null);
     const [showViewHistory, setShowViewHistory] = useState(false);
-    const [patientInformatiom, setPatientInformation] = useState([])
+    const [patientInformatiom, setPatientInformation] = useState([]);
 
     const navigate = useNavigate();
 
     const handleGoBack = () => {
         navigate(-1);
     };
-
 
     const toogleOpenViewHistory = () => {
         setShowViewHistory(!showViewHistory);
@@ -48,8 +43,6 @@ const PatientsDeatails = () => {
         const fetchAndSave = async () => {
             try {
                 const response = await getPatientDetails(custUuid);
-                dispatch(savePatientData(response));
-
                 setPatientInformation(response);
 
             } catch (error) {
@@ -57,10 +50,9 @@ const PatientsDeatails = () => {
             }
         };
         fetchAndSave();
-    }, [dispatch]);
+    }, []);
 
 
-    if (error) return <p>Error: {error}</p>;
 
     const patientInfo = patientInformatiom?.data;
 

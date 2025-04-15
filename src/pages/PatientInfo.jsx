@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Card, Typography, SvgIcon, IconButton, Tooltip } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import PageLoading from "../components/PageLoading";
 import { getPatientDetails } from "../api/patientsDetails";
-import { savePatientData } from "../redux/PatientsSlice";
 
 
 const PatientInfo = () => {
@@ -16,23 +15,23 @@ const PatientInfo = () => {
 
     const dispatch = useDispatch();
 
-    //to provide the data to the redux
+    //To provide the data to the redux
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
                 setLoading(true);
                 const response = await getPatientDetails(custUuid);
-                dispatch(savePatientData(response));
                 setPatientsDetails(response);
-
             } catch (error) {
                 console.error("Error:", error);
             } finally {
-                setLoading(false); 
+                setLoading(false);
             }
         };
         fetchAndSave();
-    }, [dispatch]);
+    }, []);
+
+
 
     if (loading) return <PageLoading />;
 
@@ -185,7 +184,6 @@ const PatientInfo = () => {
                     </Box>
                 </Card>
 
-
                 <Card sx={{
                     height: "320px", overflow: "scroll", flex: 1, borderRadius: "8px", marginLeft: "16px", marginTop: "16px", width: "100%", border: "1px solid rgb(255, 255, 255)", boxShadow: "rgba(0, 0, 0, 0.2) 0px 0px 4px 0px", padding: "16px",
                     "&::-webkit-scrollbar": {
@@ -216,8 +214,6 @@ const PatientInfo = () => {
                     </Box>
                 </Card>
 
-
-
                 <Card sx={{
                     height: "320px", overflow: "scroll", flex: 1, borderRadius: "8px", marginLeft: "16px", marginTop: "16px", border: "1px solid rgb(255, 255, 255)", boxShadow: "rgba(0, 0, 0, 0.2) 0px 0px 4px 0px", padding: "16px",
                     "&::-webkit-scrollbar": {
@@ -246,7 +242,6 @@ const PatientInfo = () => {
 
             </Box>
 
-
             <Box sx={{ display: "flex" }}>
 
                 <Card sx={{
@@ -274,8 +269,6 @@ const PatientInfo = () => {
                         <Typography variant="body1" sx={{ color: "000", fontSize: "12px", fontWeight: "500", paddingTop: "3px" }}>{PatientsDetails?.joiningDate ? PatientsDetails?.joiningDate : '-'}</Typography>
                     </Box>
                 </Card>
-
-
 
                 <Card sx={{
                     height: "320px", overflow: "scroll", width: "100%", flex: 0.32, borderRadius: "8px", marginLeft: "16px", marginTop: "16px", border: "1px solid rgb(255, 255, 255)", boxShadow: "rgba(0, 0, 0, 0.2) 0px 0px 4px 0px", padding: "16px",

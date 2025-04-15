@@ -1,20 +1,18 @@
 
-const initialState = {
+const initialState = {      
     state: {}
 }
 
-export const patientsReducer = (action) => {
+export const patientsReducer = (state = initialState, action) => {
     switch (action?.type) {
         case ('SAVE_PATIENT_DATA'): {
             return {
-                ...initialState,
+                ...state,
                 state: action?.payload
             }
         }
         default: {
-            return {
-                initialState
-            }
+            return state;
         }
     }
 }

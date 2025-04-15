@@ -10,8 +10,6 @@ import FormControl from '@mui/material/FormControl';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import EditIcon from '@mui/icons-material/Edit';
 import { getAppointmentDetails } from "../api/Appointment";
-import { useDispatch } from "react-redux";
-import { savePatientData } from "../redux/PatientsSlice";
 
 
 
@@ -38,15 +36,14 @@ const Prescription = () => {
         Addintake: "After food",
     });
     const [appointmentData, setAppointmentData] = useState([]);
+    
     const appointmentUuid = appointmentData[0]?.appointmentUuid
 
-    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchAndSave = async () => {
             try {
                 const response = await getAppointmentDetails();
-                dispatch(savePatientData(response));
 
                 setAppointmentData(response?.data?.data);
 
@@ -55,7 +52,7 @@ const Prescription = () => {
             }
         };
         fetchAndSave();
-    }, [dispatch]);
+    }, []);
 
 
     //To get the value and Add the values to formvalues
