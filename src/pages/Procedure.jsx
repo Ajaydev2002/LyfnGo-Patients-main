@@ -86,7 +86,7 @@ const Procedure = () => {
                 }
 
             );
-            alert("Prescription updated successfully!");
+            alert("Procedure updated successfully!");
 
         } catch (error) {
             console.error("API Error:", error);

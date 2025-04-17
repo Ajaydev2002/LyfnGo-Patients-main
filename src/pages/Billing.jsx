@@ -163,7 +163,7 @@ const Billing = () => {
                     },
                 }
             );
-            alert("Prescription updated successfully!");
+            alert("Billing updated successfully!");
         } catch (error) {
             console.error("Error", error.response?.data || error.message);
             alert("Faild to update Billing");
