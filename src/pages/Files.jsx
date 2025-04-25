@@ -59,7 +59,6 @@ const Files = () => {
                 supDocUuid: item.uuid,
             }));
 
-
             const response = await axios.post(
                 `https://flash.lyf.yoga/files/charting/api/files/${appointmentUuid}`,
                 payload,
@@ -122,6 +121,7 @@ const Files = () => {
     const onDrop = (acceptedFiles) => {
         if (acceptedFiles.length > 0) {
             handleUpload(acceptedFiles[0]);
+            console.log("acceptedFiles",acceptedFiles);
         }
     };
 
@@ -167,7 +167,7 @@ const Files = () => {
                         label="File Name"
                         value={fileType}
                         onChange={(e) => setFileType(e.target.value)}
-                        defaultValue="Prescription"
+                        defaultValue="prescription"
                         sx={{
                             width: "600px",
                             "& .MuiInputBase-root": {
@@ -189,10 +189,12 @@ const Files = () => {
                 <Box sx={{ mt: 5, display: "flex", gap: "10px" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         {preview && preview.map((item) => (
-                            <Box sx={{display:"flex",flexDirection:"column",gap:"1px"}}>
-                                <img src={item.filePath} alt="preview" width="100px" style={{ borderRadius: "5px" }} />
-                                <Typography variant="body1" sx={{ fontSize: "9px", width: "100px", color: "#fff", padding: "4px", borderRadius: "4px", backgroundColor: "#323232" }}>{item?.documentName}</Typography>
-                            </Box>
+                            item.fileType === fileType.toLowerCase() ? (
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+                                    <img src={item.filePath} alt="preview" width="100px" style={{ borderRadius: "5px" }} />
+                                    <Typography variant="body1" sx={{ fontSize: "9px", width: "100px", color: "#fff", padding: "4px", borderRadius: "4px", backgroundColor: "#323232" }}>{item?.documentName}</Typography>
+                                </Box>
+                            ) : ""
                         ))}
                     </Box>
                     <Box>

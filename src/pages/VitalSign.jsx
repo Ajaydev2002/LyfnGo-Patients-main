@@ -115,6 +115,7 @@ const VitalSign = () => {
 
     const formik = useFormik({
         enableReinitialize: true,
+        validationSchema : validationScheme,
         initialValues,
         onSubmit: async (values, { setSubmitting, setValues }) => {
 
@@ -1082,7 +1083,6 @@ const VitalSign = () => {
                             </Box>
                         </Box>
 
-
                         <Box sx={{ display: "flex", gap: "14px", marginTop: "18px" }}>
                             <Box>
                                 <Typography variant="body2" sx={{ fontWeight: "400", paddingBottom: "8px", fontSize: "13px" }}>waist</Typography>
@@ -1145,7 +1145,6 @@ const VitalSign = () => {
                             </Box>
                         </Box>
 
-
                         <Box sx={{ display: "flex", gap: "14px", marginTop: "18px" }}>
                             <Box>
                                 <Typography variant="body2" sx={{ fontWeight: "400", paddingBottom: "8px", fontSize: "13px" }}>Thigh</Typography>
@@ -1207,7 +1206,6 @@ const VitalSign = () => {
                                 </TextField>
                             </Box>
                         </Box>
-
 
                         <Box sx={{ marginTop: "18px" }}>
                             <Typography variant="body2" sx={{ fontWeight: "400", paddingBottom: "8px", fontSize: "13px" }}>Body fat</Typography>

@@ -9,7 +9,6 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { getAppointmentDetails } from "../api/Appointment";
 import { useDispatch } from "react-redux";
 import { savePatientData } from "../redux/PatientsSlice";
-import { Note } from "@mui/icons-material";
 
 
 
@@ -34,8 +33,6 @@ const LabOrder = () => {
     const [notes, setNotes] = useState();
 
     const dispatch = useDispatch();
-
-    console.log("notes", notes)
 
     //To get appointment details
     useEffect(() => {
@@ -84,7 +81,6 @@ const LabOrder = () => {
                         Internal: "LYFnGO",
                     },
                 }
-
             );
             alert("Lab Order updated successfully!");
 

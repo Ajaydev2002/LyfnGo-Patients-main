@@ -278,8 +278,6 @@ const Prescription = () => {
                     </Button>
                 </Box>
 
-
-
                 <Box sx={{ marginTop: "20px" }}>
                     <Box>
                         <Box sx={{ display: optionType === "Template" ? "block" : "none" }}>
@@ -418,7 +416,7 @@ const Prescription = () => {
                                         />
                                     </Box>
                                     <Box>
-                                        <Typography variant="boday2" sx={{ fontSize: "13px" }}>Tablet(s)</Typography>
+                                        <Typography variant="body2" sx={{ fontSize: "13px" }}>Tablet(s)</Typography>
                                     </Box>
                                 </Box>
                             </Box>
@@ -534,7 +532,6 @@ const Prescription = () => {
                         </Box>
                     </Box>
                 </Box>
-
 
                 <Box sx={{ marginTop: "60px" }}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
