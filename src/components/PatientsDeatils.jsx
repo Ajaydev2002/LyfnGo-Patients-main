@@ -52,8 +52,6 @@ const PatientsDeatails = () => {
         fetchAndSave();
     }, []);
 
-
-
     const patientInfo = patientInformatiom?.data;
 
     return (

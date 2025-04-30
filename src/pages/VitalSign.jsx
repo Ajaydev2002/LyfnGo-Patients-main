@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, SvgIcon, IconButton, TextField, InputAdornment, OutlinedInput, MenuItem, Button } from "@mui/material";
+import { Box, Typography, SvgIcon, IconButton, TextField, InputAdornment, OutlinedInput, MenuItem, Button, FormControl, InputLabel } from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -26,9 +26,9 @@ dayjs.extend(utc);
 
 const validationScheme = Yup.object({
     weight: Yup.number().required("weight is required*").min(1, "weight must be greater than 0").max(700, "weight can't be greater than 700"),
-    Height: Yup.number().max(350, "Height cannot be greater than 350"),
-    Systolic: Yup.number().min(50, "Systolic blood pressure cannot be less than 50").max(300, "Systolic blood pressure cannot be greater than 300"),
-    Diastolic: Yup.number().min(25, "Diastolic blood pressure cannot be less than 25").max(200, "Diastolic blood pressure cannot be greater than 200"),
+    height: Yup.number().max(350, "Height cannot be greater than 350"),
+    bpSys: Yup.number().min(50, "Systolic blood pressure cannot be less than 50").max(300, "Systolic blood pressure cannot be greater than 300"),
+    bpDystole: Yup.number().min(25, "Diastolic blood pressure cannot be less than 25").max(200, "Diastolic blood pressure cannot be greater than 200"),
 })
 
 const VitalSign = () => {
@@ -101,21 +101,21 @@ const VitalSign = () => {
         neckUnit: "inch",
         upperArmUnit: "inch",
         upperArm: saveVitalSigns?.upperArm ? Number(saveVitalSigns.upperArm) : "",
-        chest:  saveVitalSigns?.chest ? Number(saveVitalSigns.chest) : "",
+        chest: saveVitalSigns?.chest ? Number(saveVitalSigns.chest) : "",
         chestUnit: "inch",
-        hip:  saveVitalSigns?.hip ? Number(saveVitalSigns.hip) : "",
+        hip: saveVitalSigns?.hip ? Number(saveVitalSigns.hip) : "",
         hipUnit: "inch",
-        waist:  saveVitalSigns?.waist ? Number(saveVitalSigns.waist) : "",
+        waist: saveVitalSigns?.waist ? Number(saveVitalSigns.waist) : "",
         waistUnit: "inch",
         thigh: saveVitalSigns?.thigh ? Number(saveVitalSigns.thigh) : "",
         thighUnit: "inch",
-        bodyFat:  saveVitalSigns?.bodyFat ? Number(saveVitalSigns.bodyFat) : "",
-        bodyAge:  saveVitalSigns?.bodyAge ? Number(saveVitalSigns.bodyAge) : "",
+        bodyFat: saveVitalSigns?.bodyFat ? Number(saveVitalSigns.bodyFat) : "",
+        bodyAge: saveVitalSigns?.bodyAge ? Number(saveVitalSigns.bodyAge) : "",
     }), [saveVitalSigns]);
 
     const formik = useFormik({
         enableReinitialize: true,
-        validationSchema : validationScheme,
+        validationSchema: validationScheme,
         initialValues,
         onSubmit: async (values, { setSubmitting, setValues }) => {
 
@@ -289,6 +289,7 @@ const VitalSign = () => {
                                     <OutlinedInput
                                         id="outlined-adornment-weight"
                                         name="weight"
+                                        type="number"
                                         value={formik.values.weight}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
@@ -432,13 +433,13 @@ const VitalSign = () => {
                                         onBlur={formik.handleBlur}
                                         endAdornment={
                                             <InputAdornment position="end">
-                                                <span style={{ fontSize: "13px", color: "gray" }}>mmHg</span>
+                                                <span style={{ fontSize: "13px", color: "grey" }}>mmHg</span>
                                             </InputAdornment>
                                         }
                                         aria-describedby="outlined-weight-helper-text"
                                         size="small"
                                         inputProps={{
-                                            'aria-label': 'weight',
+                                            'aria-label': 'Systolic',
                                             placeholder: 'Systolic',
                                             maxLength: 10
                                         }}

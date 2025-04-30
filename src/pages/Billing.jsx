@@ -51,6 +51,8 @@ const Billing = () => {
     const dispatch = useDispatch();
     
     const appointmentUuid = appointmentData[0]?.appointmentUuid
+    
+    console.log("treatmentName",treatmentName);
 
     useEffect(() => {
         const fetchAndSave = async () => {
@@ -523,7 +525,6 @@ const Billing = () => {
 
 
 
-
     return (
         <Box sx={{ padding: "20px" }}>
             {appointmentData?.map((item) => (
@@ -826,7 +827,6 @@ const Billing = () => {
                             </Box>
                         </Box>
 
-
                         <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "20px", paddingTop: "35px" }}>
                             <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>Total(INR)</Typography>
                             <Typography variant="body 1" sx={{ fontSize: "13px", fontWeight: "400" }}>{totalPrice}</Typography>
@@ -857,7 +857,6 @@ const Billing = () => {
 
             <Box sx={{ marginTop: "30px", display: openProduct === true ? "block" : "none" }}>
                 <Box >
-
 
                     <Box>
                         <Autocomplete
